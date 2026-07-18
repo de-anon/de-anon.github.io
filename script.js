@@ -28,7 +28,7 @@ let currentLang = localStorage.getItem('lang') || 'ru';
 
 async function loadLanguage(lang) {
     try {
-        const res = await fetch(`lang/${lang}.json`);
+        const res = await fetch(`/lang/${lang}.json`);
         const data = await res.json();
         document.querySelectorAll('[data-i18n]').forEach(el => {
             const key = el.getAttribute('data-i18n');
