@@ -43,7 +43,22 @@ async function loadLanguage(lang) {
             en: '<svg viewBox="0 0 640 480" style="width:20px;height:15px;"><path fill="#bd3d44" d="M0 0h640v480H0"/><path stroke="#fff" stroke-width="37" d="M0 55.3h640M0 129h640M0 203h640M0 277h640M0 351h640M0 425h640"/><path fill="#192f5d" d="M0 0h364.8v258.5H0"/></svg>',
             fr: '<svg viewBox="0 0 640 480" style="width:20px;height:15px;"><path fill="#000091" d="M0 0h213.3v480H0z"/><path fill="#fff" d="M213.3 0h213.4v480H213.3z"/><path fill="#e1000f" d="M426.7 0H640v480H426.7z"/></svg>'
         };
-        document.getElementById('langToggleBtn').innerHTML = flags[lang];
+
+        // ===== НОВЫЙ КОД =====
+        // Определяем текущую страницу по пути
+        const path = window.location.pathname;
+        let pageKey = 'page_title_main';
+        if (path.includes('/about/')) pageKey = 'page_title_about';
+        else if (path.includes('/faq/')) pageKey = 'page_title_faq';
+        else if (path.includes('/tos/')) pageKey = 'page_title_tos';
+        else if (path.includes('/privacy/')) pageKey = 'page_title_privacy';
+        // Для главной страницы (корень или /index.html) оставляем page_title_main
+        
+        if (data[pageKey]) {
+            document.title = data[pageKey];
+        }
+        // =====================
+
     } catch (e) {
         console.error('Lang error', e);
     }
