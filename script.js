@@ -1,263 +1,190 @@
-// script.js
-document.addEventListener('DOMContentLoaded', () => {
-    // --- Состояние ---
-    let currentLang = localStorage.getItem('lang') || 'ru';
-    let allCards = [];
-    let filteredCards = [];
+// Custom Cursor
+const cursorDot = document.querySelector('.cursor-dot');
+const cursorRing = document.querySelector('.cursor-ring');
+let mouseX = 0, mouseY = 0, ringX = 0, ringY = 0;
 
-    // --- DOM элементы ---
-    const htmlEl = document.documentElement;
-    const body = document.body;
-    const searchInput = document.getElementById('search-input');
-    const filterSelect = document.getElementById('filter-select');
-    const cardsContainer = document.getElementById('cards-container');
-    const noResults = document.getElementById('no-results');
-    const modal = document.getElementById('card-modal');
-    const modalBody = document.getElementById('modal-body');
-    const modalClose = document.querySelector('.modal-close');
-    const bviPanel = document.getElementById('bvi-panel');
-    const bviToggle = document.querySelector('.bvi-toggle');
-    const bviClose = document.querySelector('.bvi-close');
-    const versionToggle = document.querySelector('.version-toggle');
-    const langDropdown = document.querySelector('.lang-dropdown');
-    const langBtn = document.querySelector('.lang-btn');
-    const themeBtns = document.querySelectorAll('.theme-btn');
+document.addEventListener('mousemove', e => {
+    mouseX = e.clientX; mouseY = e.clientY;
+    cursorDot.style.left = mouseX + 'px';
+    cursorDot.style.top = mouseY + 'px';
+});
 
-    // --- Инициализация темы ---
-    const savedTheme = localStorage.getItem('theme') || 'system';
-    applyTheme(savedTheme);
-    highlightThemeButton(savedTheme);
+function animateRing() {
+    ringX += (mouseX - ringX) * 0.1;
+    ringY += (mouseY - ringY) * 0.1;
+    cursorRing.style.left = ringX + 'px';
+    cursorRing.style.top = ringY + 'px';
+    requestAnimationFrame(animateRing);
+}
+animateRing();
 
-    // --- Инициализация языка ---
-    applyLanguage(currentLang);
-    fetchCards();
+document.querySelectorAll('button, a, input').forEach(el => {
+    el.addEventListener('mouseenter', () => { cursorRing.style.transform = 'scale(1.5)'; });
+    el.addEventListener('mouseleave', () => { cursorRing.style.transform = 'scale(1)'; });
+});
 
-    // --- Обработчики ---
-    searchInput.addEventListener('input', filterCards);
-    filterSelect.addEventListener('change', filterCards);
+// i18n System
+let currentLang = localStorage.getItem('lang') || 'ru';
 
-    // Модальное окно
-    modalClose.addEventListener('click', closeModal);
-    modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
-
-    // BVI панель
-    bviToggle.addEventListener('click', () => bviPanel.classList.toggle('open'));
-    bviClose.addEventListener('click', () => bviPanel.classList.remove('open'));
-    initBVI();
-
-    // Переключение языка
-    langBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        langDropdown.classList.toggle('active');
-    });
-    document.addEventListener('click', () => langDropdown.classList.remove('active'));
-    document.querySelectorAll('.lang-option').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            const lang = e.currentTarget.dataset.lang;
-            currentLang = lang;
-            localStorage.setItem('lang', lang);
-            applyLanguage(lang);
-            langDropdown.classList.remove('active');
-        });
-    });
-
-    // Темы
-    themeBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            const theme = btn.dataset.theme;
-            localStorage.setItem('theme', theme);
-            applyTheme(theme);
-            highlightThemeButton(theme);
-        });
-    });
-
-    // Версия (mobile/desktop)
-    versionToggle.addEventListener('click', () => {
-        const app = document.getElementById('app');
-        if (app.classList.contains('force-desktop')) {
-            app.classList.replace('force-desktop', 'force-mobile');
-        } else {
-            app.classList.replace('force-mobile', 'force-desktop');
-        }
-    });
-
-    // --- Функции ---
-    async function fetchCards() {
-        try {
-            const listResp = await fetch('/cards/list.json');
-            if (!listResp.ok) throw new Error('list.json not found');
-            const list = await listResp.json();
-            const cardPromises = list.map(id =>
-                fetch(`/cards/${id}.json`).then(r => r.json()).catch(() => null)
-            );
-            const cards = await Promise.all(cardPromises);
-            allCards = cards.filter(c => c !== null).map(c => ({ ...c, id: c.id || c.phone || Math.random().toString(36) }));
-            filteredCards = [...allCards];
-            renderCards(filteredCards);
-        } catch (e) {
-            console.warn('Ошибка загрузки карточек:', e);
-            allCards = [];
-            renderCards([]);
-        }
-    }
-
-    function renderCards(cards) {
-        cardsContainer.innerHTML = '';
-        noResults.hidden = cards.length > 0;
-        if (cards.length === 0) return;
-
-        cards.forEach(card => {
-            const cardEl = document.createElement('div');
-            cardEl.className = 'card glass';
-            cardEl.innerHTML = `
-                <img src="${card.photo || '/assets/placeholder.svg'}" alt="${card.name}" class="card-photo" loading="lazy">
-                <div class="card-info">
-                    <div class="card-name">${card.name}</div>
-                    <div class="card-phone">${card.phone || ''}</div>
-                    <div class="card-address">${card.address || ''}</div>
-                </div>
-            `;
-            cardEl.addEventListener('click', () => openCardModal(card));
-            cardsContainer.appendChild(cardEl);
-        });
-    }
-
-    function filterCards() {
-        const searchTerm = searchInput.value.toLowerCase();
-        const filterBy = filterSelect.value;
-
-        filteredCards = allCards.filter(card => {
-            const matchesSearch = !searchTerm || 
-                (card.name && card.name.toLowerCase().includes(searchTerm)) ||
-                (card.phone && card.phone.includes(searchTerm)) ||
-                (card.address && card.address.toLowerCase().includes(searchTerm));
-            if (!matchesSearch) return false;
-
-            if (filterBy === 'name') return card.name && card.name.toLowerCase().includes(searchTerm);
-            if (filterBy === 'phone') return card.phone && card.phone.includes(searchTerm);
-            if (filterBy === 'address') return card.address && card.address.toLowerCase().includes(searchTerm);
-            return true; // all
-        });
-        renderCards(filteredCards);
-    }
-
-    function openCardModal(card) {
-        modalBody.innerHTML = `
-            <h2 style="font-family:var(--font-mono); color:var(--accent);">${card.name}</h2>
-            ${card.photo ? `<img src="${card.photo}" alt="${card.name}" style="max-height:300px; width:100%; object-fit:cover;">` : ''}
-            <p><strong data-i18n="phone_label">Телефон:</strong> ${card.phone || '-'}</p>
-            <p><strong data-i18n="address_label">Адрес:</strong> ${card.address || '-'}</p>
-            <p><strong data-i18n="email_label">Email:</strong> ${card.email || '-'}</p>
-            ${card.socials ? `<p><strong data-i18n="socials_label">Соцсети:</strong> ${Object.entries(card.socials).map(([k,v]) => `${k}: ${v}`).join('; ')}</p>` : ''}
-            ${card.description ? `<p>${card.description}</p>` : ''}
-            ${card.photos ? card.photos.map(p => `<img src="${p}" loading="lazy" style="max-width:100%; margin-top:10px; border-radius:12px;">`).join('') : ''}
-        `;
-        modal.hidden = false;
-        // обновить переводы внутри модалки
-        const modalI18n = modalBody.querySelectorAll('[data-i18n]');
-        modalI18n.forEach(el => {
-            const key = el.dataset.i18n;
-            if (translations[currentLang] && translations[currentLang][key]) {
-                el.textContent = translations[currentLang][key];
-            }
-        });
-    }
-
-    function closeModal() {
-        modal.hidden = true;
-    }
-
-    // i18n
-    let translations = {};
-    async function applyLanguage(lang) {
-        try {
-            const resp = await fetch(`/lang/${lang}.json`);
-            translations[lang] = await resp.json();
-        } catch (e) {
-            console.error('Failed to load language', lang);
-            return;
-        }
-        htmlEl.lang = lang;
+async function loadLanguage(lang) {
+    try {
+        const res = await fetch(`lang/${lang}.json`);
+        const data = await res.json();
         document.querySelectorAll('[data-i18n]').forEach(el => {
-            const key = el.dataset.i18n;
-            if (translations[lang] && translations[lang][key]) {
-                el.textContent = translations[lang][key];
-            }
+            const key = el.getAttribute('data-i18n');
+            if (data[key]) el.textContent = data[key];
         });
-        document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
-            const key = el.dataset.i18nPlaceholder;
-            if (translations[lang] && translations[lang][key]) {
-                el.placeholder = translations[lang][key];
-            }
-        });
-        // aria-label с data-i18n-title
-        document.querySelectorAll('[data-i18n-title]').forEach(el => {
-            const key = el.dataset.i18nTitle;
-            if (translations[lang] && translations[lang][key]) {
-                el.setAttribute('aria-label', translations[lang][key]);
-                el.title = translations[lang][key];
-            }
-        });
+        document.documentElement.lang = lang;
+        localStorage.setItem('lang', lang);
+        
+        // Update flag
+        const flags = {
+            ru: '<svg viewBox="0 0 640 480" style="width:20px;height:15px;"><path fill="#fff" d="M0 0h640v160H0z"/><path fill="#0039a6" d="M0 160h640v160H0z"/><path fill="#d52b1e" d="M0 320h640v160H0z"/></svg>',
+            en: '<svg viewBox="0 0 640 480" style="width:20px;height:15px;"><path fill="#bd3d44" d="M0 0h640v480H0"/><path stroke="#fff" stroke-width="37" d="M0 55.3h640M0 129h640M0 203h640M0 277h640M0 351h640M0 425h640"/><path fill="#192f5d" d="M0 0h364.8v258.5H0"/></svg>',
+            fr: '<svg viewBox="0 0 640 480" style="width:20px;height:15px;"><path fill="#000091" d="M0 0h213.3v480H0z"/><path fill="#fff" d="M213.3 0h213.4v480H213.3z"/><path fill="#e1000f" d="M426.7 0H640v480H426.7z"/></svg>'
+        };
+        document.getElementById('langToggleBtn').innerHTML = flags[lang];
+    } catch (e) {
+        console.error('Lang error', e);
     }
+}
 
-    // Тема
-    function applyTheme(theme) {
-        htmlEl.classList.remove('theme-light', 'theme-dark', 'theme-system');
-        htmlEl.classList.add(`theme-${theme}`);
-    }
-    function highlightThemeButton(theme) {
-        themeBtns.forEach(b => b.classList.remove('active'));
-        document.querySelector(`.theme-btn[data-theme="${theme}"]`)?.classList.add('active');
-    }
-
-    // BVI логика
-    function initBVI() {
-        const fontDec = document.querySelector('.bvi-font-dec');
-        const fontInc = document.querySelector('.bvi-font-inc');
-        const fontVal = document.querySelector('.bvi-font-value');
-        const scaleDec = document.querySelector('.bvi-scale-dec');
-        const scaleInc = document.querySelector('.bvi-scale-inc');
-        const scaleVal = document.querySelector('.bvi-scale-value');
-        const serifToggle = document.querySelector('.bvi-serif-toggle');
-
-        let fontSize = parseInt(localStorage.getItem('bvi-font-size') || '100');
-        let scale = parseInt(localStorage.getItem('bvi-scale') || '100');
-        let serif = localStorage.getItem('bvi-serif') === 'true';
-
-        function updateUI() {
-            document.documentElement.style.fontSize = `${fontSize}%`;
-            document.getElementById('app').style.transform = `scale(${scale/100})`;
-            document.getElementById('app').style.transformOrigin = 'top center';
-            if (serif) {
-                body.style.fontFamily = 'Georgia, "Times New Roman", serif';
-            } else {
-                body.style.fontFamily = '';
-            }
-            fontVal.textContent = `${fontSize}%`;
-            scaleVal.textContent = `${scale}%`;
-            serifToggle.textContent = serif ? (translations[currentLang]?.on || 'Вкл') : (translations[currentLang]?.off || 'Выкл');
-        }
-
-        fontDec.addEventListener('click', () => { fontSize = Math.max(70, fontSize - 10); saveBVI(); });
-        fontInc.addEventListener('click', () => { fontSize = Math.min(200, fontSize + 10); saveBVI(); });
-        scaleDec.addEventListener('click', () => { scale = Math.max(70, scale - 10); saveBVI(); });
-        scaleInc.addEventListener('click', () => { scale = Math.min(200, scale + 10); saveBVI(); });
-        serifToggle.addEventListener('click', () => { serif = !serif; saveBVI(); });
-
-        function saveBVI() {
-            localStorage.setItem('bvi-font-size', fontSize);
-            localStorage.setItem('bvi-scale', scale);
-            localStorage.setItem('bvi-serif', serif);
-            updateUI();
-        }
-        updateUI();
-    }
-
-    // Закрытие по Escape
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') {
-            closeModal();
-            bviPanel.classList.remove('open');
-        }
+document.querySelectorAll('[data-lang]').forEach(btn => {
+    btn.addEventListener('click', () => {
+        const lang = btn.getAttribute('data-lang');
+        loadLanguage(lang);
+        document.querySelector('#langDropdown .dropdown-menu').classList.remove('active');
     });
 });
+
+// Theme System
+const themeBtns = document.querySelectorAll('[data-theme]');
+function applyTheme(theme) {
+    if (theme === 'system') {
+        const sysDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.setAttribute('data-theme', sysDark ? 'dark' : 'light');
+    } else {
+        document.documentElement.setAttribute('data-theme', theme);
+    }
+    localStorage.setItem('theme', theme);
+}
+
+themeBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+        applyTheme(btn.getAttribute('data-theme'));
+        document.querySelector('#themeDropdown .dropdown-menu').classList.remove('active');
+    });
+});
+applyTheme(localStorage.getItem('theme') || 'dark');
+
+// Dropdown toggles
+document.getElementById('themeToggleBtn').addEventListener('click', (e) => {
+    e.stopPropagation();
+    document.querySelector('#themeDropdown .dropdown-menu').classList.toggle('active');
+    document.querySelector('#langDropdown .dropdown-menu').classList.remove('active');
+});
+document.getElementById('langToggleBtn').addEventListener('click', (e) => {
+    e.stopPropagation();
+    document.querySelector('#langDropdown .dropdown-menu').classList.toggle('active');
+    document.querySelector('#themeDropdown .dropdown-menu').classList.remove('active');
+});
+document.body.addEventListener('click', () => {
+    document.querySelectorAll('.dropdown-menu').forEach(m => m.classList.remove('active'));
+});
+
+// BVI Panel
+const bviPanel = document.getElementById('bviPanel');
+document.getElementById('bviBtn').addEventListener('click', () => bviPanel.classList.add('active'));
+document.getElementById('bviClose').addEventListener('click', () => bviPanel.classList.remove('active'));
+
+document.getElementById('bviFontSize').addEventListener('input', e => {
+    document.documentElement.style.setProperty('--font-size-base', e.target.value + 'px');
+});
+document.getElementById('bviUiSize').addEventListener('input', e => {
+    document.documentElement.style.setProperty('--ui-scale', e.target.value / 100);
+});
+document.getElementById('bviSerif').addEventListener('change', e => {
+    document.documentElement.style.setProperty('--font-family', e.target.checked ? 'Georgia, serif' : "'Courier New', monospace");
+});
+
+// Layout Toggle
+document.getElementById('layoutToggle').addEventListener('click', () => {
+    document.body.classList.toggle('force-desktop');
+    document.body.classList.toggle('force-mobile');
+});
+
+// Cards Autoload System
+async function loadCards() {
+    try {
+        // ВАЖНО: Для работы автозагрузки создай файл cards/manifest.json 
+        // с массивом названий файлов, например: ["card1.json", "card2.json"]
+        const res = await fetch('cards/manifest.json');
+        const files = await res.json();
+        const grid = document.getElementById('cardsGrid');
+        grid.innerHTML = '';
+        
+        for (const file of files) {
+            const cardRes = await fetch(`cards/${file}`);
+            const card = await cardRes.json();
+            
+            const cardEl = document.createElement('div');
+            cardEl.className = 'card glass';
+            cardEl.setAttribute('data-type', card.type || 'all');
+            cardEl.innerHTML = `
+                <img src="${card.photo}" class="card-img" alt="${card.name}">
+                <div class="card-body">
+                    <div class="card-name">${card.name}</div>
+                    <div class="card-info">Phone: ${card.phone}</div>
+                    <div class="card-info">City: ${card.address}</div>
+                </div>
+            `;
+            cardEl.addEventListener('click', () => openModal(card));
+            grid.appendChild(cardEl);
+        }
+    } catch (e) {
+        console.error('Failed to load cards', e);
+        document.getElementById('cardsGrid').innerHTML = '<p style="color:var(--text-color)">No cards found. Create cards/manifest.json</p>';
+    }
+}
+
+function openModal(card) {
+    const modal = document.getElementById('modalContent');
+    modal.innerHTML = `
+        <button class="modal-close" id="modalClose">&times;</button>
+        <img src="${card.photo}" style="width:100%; max-height:400px; object-fit:cover; border-radius:12px; margin-bottom:20px;">
+        <h2>${card.name}</h2>
+        <p>Phone: ${card.phone}</p>
+        <p>Address: ${card.address}</p>
+        <p>Socials: ${card.socials}</p>
+    `;
+    document.getElementById('modalOverlay').classList.add('active');
+    document.getElementById('modalClose').addEventListener('click', closeModal);
+}
+function closeModal() { document.getElementById('modalOverlay').classList.remove('active'); }
+document.getElementById('modalOverlay').addEventListener('click', e => { if (e.target.id === 'modalOverlay') closeModal(); });
+
+// Search & Filter
+document.getElementById('searchInput').addEventListener('input', filterCards);
+document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        filterCards();
+    });
+});
+
+function filterCards() {
+    const term = document.getElementById('searchInput').value.toLowerCase();
+    const activeFilter = document.querySelector('.filter-btn.active').getAttribute('data-filter');
+    document.querySelectorAll('.card').forEach(card => {
+        const text = card.textContent.toLowerCase();
+        const type = card.getAttribute('data-type');
+        const termMatch = text.includes(term);
+        const typeMatch = (activeFilter === 'all' || type === activeFilter);
+        card.style.display = (termMatch && typeMatch) ? 'block' : 'none';
+    });
+}
+
+// Init
+loadLanguage(currentLang);
+loadCards();
