@@ -36,7 +36,7 @@ async function loadLanguage(lang) {
         });
         document.documentElement.lang = lang;
         localStorage.setItem('lang', lang);
-        
+
         // Update flag
         const flags = {
             ru: '<svg viewBox="0 0 640 480" style="width:20px;height:15px;"><path fill="#fff" d="M0 0h640v160H0z"/><path fill="#0039a6" d="M0 160h640v160H0z"/><path fill="#d52b1e" d="M0 320h640v160H0z"/></svg>',
@@ -44,20 +44,19 @@ async function loadLanguage(lang) {
             fr: '<svg viewBox="0 0 640 480" style="width:20px;height:15px;"><path fill="#000091" d="M0 0h213.3v480H0z"/><path fill="#fff" d="M213.3 0h213.4v480H213.3z"/><path fill="#e1000f" d="M426.7 0H640v480H426.7z"/></svg>'
         };
 
-        // ===== НОВЫЙ КОД =====
-        // Определяем текущую страницу по пути
+        // Обновляем флаг в кнопке
+        document.getElementById('langToggleBtn').innerHTML = flags[lang];
+
+        // Обновляем заголовок вкладки
         const path = window.location.pathname;
         let pageKey = 'page_title_main';
         if (path.includes('/about/')) pageKey = 'page_title_about';
         else if (path.includes('/faq/')) pageKey = 'page_title_faq';
         else if (path.includes('/tos/')) pageKey = 'page_title_tos';
         else if (path.includes('/privacy/')) pageKey = 'page_title_privacy';
-        // Для главной страницы (корень или /index.html) оставляем page_title_main
-        
         if (data[pageKey]) {
             document.title = data[pageKey];
         }
-        // =====================
 
     } catch (e) {
         console.error('Lang error', e);
