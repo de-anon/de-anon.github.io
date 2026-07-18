@@ -10,5 +10,20 @@
     "theme_dark": "Dark",
     "bvi_font_size": "Font Size",
     "bvi_ui_size": "UI Scale",
-    "bvi_serif": "Serif Font"
+    "bvi_serif": "Serif Font",
+    "site_title": "De-Anon",
+    "about": "About",
+    "faq": "FAQ",
+    "tos": "Terms",
+    "privacy": "Privacy",
+    "about_title": "About the project",
+    "about_text": "De-Anon is a public database of haters and violators. The project is created for transparency.",
+    "faq_title": "FAQ",
+    "faq_q1": "How to add a card?",
+    "faq_a1": "Upload a JSON file to the /cards folder and update list.json.",
+    "tos_title": "Terms of Use",
+    "tos_text": "You agree that the information is provided as is. We are not responsible.",
+    "privacy_title": "Privacy Policy",
+    "privacy_text": "We do not collect personal data of site users. All information is public.",
+    "footer_text": "© 2024 De-Anon. All rights reserved."
 }

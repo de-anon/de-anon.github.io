@@ -10,5 +10,20 @@
     "theme_dark": "Sombre",
     "bvi_font_size": "Taille de la police",
     "bvi_ui_size": "Taille de l'interface",
-    "bvi_serif": "Police avec empattement"
+    "bvi_serif": "Police avec empattement",
+    "site_title": "De-Anon",
+    "about": "À propos",
+    "faq": "FAQ",
+    "tos": "Conditions",
+    "privacy": "Confidentialité",
+    "about_title": "À propos du projet",
+    "about_text": "De-Anon est une base de données publique de harceleurs et de contrevenants. Le projet est créé pour la transparence.",
+    "faq_title": "FAQ",
+    "faq_q1": "Comment ajouter une carte ?",
+    "faq_a1": "Téléchargez un fichier JSON dans le dossier /cards et mettez à jour list.json.",
+    "tos_title": "Conditions d'utilisation",
+    "tos_text": "Vous acceptez que les informations sont fournies en l'état. Nous ne sommes pas responsables.",
+    "privacy_title": "Politique de confidentialité",
+    "privacy_text": "Nous ne collectons pas de données personnelles des utilisateurs du site. Toutes les informations sont publiques.",
+    "footer_text": "© 2024 De-Anon. Tous droits réservés."
 }
