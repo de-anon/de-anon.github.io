@@ -1,19 +1,64 @@
-name: Notify Telegram
+name: Отправка новых карточек в Telegram
 
 on:
   push:
     paths:
-      - 'cards/**'
+      - 'cards/*.json'
+      - 'cards/manifest.json'
 
 jobs:
-  notify:
+  send_cards:
     runs-on: ubuntu-latest
     steps:
-      - name: Send notification
+      - name: Проверка репозитория
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 2
+
+      - name: Отправка в Telegram
         env:
           TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: |
+          # Если токен или чат не заданы — выходим
+          if [ -z "$TELEGRAM_TOKEN" ] || [ -z "$TELEGRAM_CHAT_ID" ]; then
+            echo "❌ Токен или Chat ID не заданы в секретах!"
+            exit 1
+          fi
+
+          # Находим изменённые JSON-файлы (кроме manifest.json)
+          CHANGED_FILES=$(git diff --name-only HEAD~1 HEAD -- 'cards/*.json' | grep -v 'manifest.json' || true)
+
+          if [ -z "$CHANGED_FILES" ]; then
+            echo "📭 Нет новых карточек."
+            exit 0
+          fi
+
+          # Формируем сообщение
+          MESSAGE="🆕 *Новые карточки в Деанон!*%0A%0A"
+
+          for FILE in $CHANGED_FILES; do
+            # Читаем поля через jq
+            NAME=$(jq -r '.name // "Неизвестно"' "$FILE")
+            PHONE=$(jq -r '.phone // "Не указан"' "$FILE")
+            ADDRESS=$(jq -r '.address // "Не указан"' "$FILE")
+            SOCIALS=$(jq -r '.socials | to_entries | map("\(.key): \(.value)") | join(", ")' "$FILE" 2>/dev/null || echo "Нет данных")
+
+            # Добавляем в сообщение
+            MESSAGE+="👤 *$NAME*%0A"
+            MESSAGE+="📱 $PHONE%0A"
+            MESSAGE+="📍 $ADDRESS%0A"
+            MESSAGE+="🔗 $SOCIALS%0A"
+            MESSAGE+="%0A"
+          done
+
+          MESSAGE+="🔗 *Сайт:* https://db.deanon.rf.gd/%0A"
+          MESSAGE+="📌 *Канал:* @deanon_db"
+
+          # Отправляем
           curl -s -X POST "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendMessage" \
             -d "chat_id=$TELEGRAM_CHAT_ID" \
-            -d "text=🆕 Добавлены новые карточки! Проверь сайт: https://db.deanon.rf.gd/"
+            -d "text=$MESSAGE" \
+            -d "parse_mode=Markdown"
+
+          echo "✅ Сообщение отправлено!"
