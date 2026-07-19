@@ -1,0 +1,11 @@
+{
+    "name": "Баенбай Марина Ивановна",
+    "phone": "+79275092721",
+    "address": "г. Волжский, ул. Р. Зорге, д. 14, кв. 47",
+    "type": "telegram",
+    "photo": "/assets/faces/marina.jpg",
+    "socials": {
+        "telegram": "https://t.me/+79275092721",
+        "vk": "baenbajmarinaivanivna"
+    }
+}
