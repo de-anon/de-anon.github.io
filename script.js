@@ -160,41 +160,43 @@ if (bviUiSize) {
     }
 }
 
-// ============================================
-// ЗАСЕЧКИ — ФИНАЛЬНЫЙ РАШ (через класс)
-// ============================================
-(function initSerif() {
-    let serifCheckbox = document.getElementById('bviSerif');
+	// ===== ЗАСЕЧКИ — ЧЕРЕЗ КЛАСС =====
+	(function initSerif() {
+		let checkbox = document.getElementById('bviSerif');
+		if (!checkbox) {
+			const panel = document.getElementById('bviPanel');
+			if (panel) {
+				const group = document.createElement('div');
+				group.className = 'bvi-group';
+				group.innerHTML = `
+					<label for="bviSerif" data-i18n="bvi_serif">Засечки</label>
+					<span class="switch">
+						<input type="checkbox" id="bviSerif">
+						<span class="slider"></span>
+					</span>
+				`;
+				panel.appendChild(group);
+				checkbox = document.getElementById('bviSerif');
+			}
+		}
+		if (!checkbox) return;
 
-    // Если чекбокса нет — создаём
-    if (!serifCheckbox) {
-        const bviPanel = document.getElementById('bviPanel');
-        if (bviPanel) {
-            const group = document.createElement('div');
-            group.className = 'bvi-group';
-            const label = document.createElement('label');
-            label.setAttribute('for', 'bviSerif');
-            label.setAttribute('data-i18n', 'bvi_serif');
-            label.textContent = 'Засечки';
-            const switchWrap = document.createElement('span');
-            switchWrap.className = 'switch';
-            const input = document.createElement('input');
-            input.type = 'checkbox';
-            input.id = 'bviSerif';
-            const slider = document.createElement('span');
-            slider.className = 'slider';
-            switchWrap.appendChild(input);
-            switchWrap.appendChild(slider);
-            group.appendChild(label);
-            group.appendChild(switchWrap);
-            bviPanel.appendChild(group);
-            serifCheckbox = input;
-            console.log('[BVI] Чекбокс создан');
-        } else {
-            console.warn('[BVI] Нет панели');
-            return;
-        }
-    }
+		function setSerif(on) {
+			document.documentElement.classList.toggle('serif', on);
+			localStorage.setItem('bviSerif', on ? 'serif' : 'sans');
+		}
+
+		checkbox.checked = localStorage.getItem('bviSerif') === 'serif';
+		setSerif(checkbox.checked);
+
+		checkbox.addEventListener('change', e => setSerif(e.target.checked));
+		window.addEventListener('storage', e => {
+			if (e.key === 'bviSerif') {
+				checkbox.checked = e.newValue === 'serif';
+				setSerif(checkbox.checked);
+			}
+		});
+	})();
 
     // Функция переключения класса
     function setSerif(on) {
