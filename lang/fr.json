@@ -37,5 +37,16 @@
     "error_500_title": "500 — Erreur interne du serveur",
     "error_500_heading": "500",
     "error_500_text": "Une erreur s'est produite sur le serveur. Veuillez réessayer plus tard.",
-    "error_go_home": "Retourner à l'accueil"
+    "error_go_home": "Retourner à l'accueil",
+    "manifest_title": "Installer PWA — De-Anon",
+    "manifest_heading": "Installez De-Anon comme application",
+    "manifest_subtitle": "Suivez les instructions pour votre plateforme – le site fonctionnera comme une application native.",
+    "manifest_android_title": "Chrome (Android)",
+    "manifest_android_steps": "1. Ouvrez db.deanon.rf.gd dans Chrome.\n2. Appuyez sur «⋮» (menu) en haut à droite.\n3. Choisissez «Installer l'application» ou «Ajouter à l'écran d'accueil».\n4. Confirmez en appuyant sur «Installer».\n5. Terminé ! L'icône apparaît sur votre bureau.",
+    "manifest_android_screenshot_alt": "[Capture : menu Chrome avec 'Installer l'application']",
+    "manifest_ios_title": "Safari (iPhone / iPad)",
+    "manifest_ios_steps": "1. Ouvrez db.deanon.rf.gd dans Safari.\n2. Appuyez sur l'icône «Partager» (carré avec flèche vers le haut) en bas.\n3. Faites défiler et sélectionnez «Ajouter à l'écran d'accueil».\n4. Appuyez sur «Ajouter» en haut à droite.\n5. Terminé ! L'icône apparaît sur votre écran d'accueil.",
+    "manifest_ios_screenshot_alt": "[Capture : menu Safari avec 'Ajouter à l'écran d'accueil']",
+    "manifest_conclusion": "Terminé ! Vous avez maintenant un accès rapide à la base de données des harceleurs directement depuis votre téléphone. 🕵️‍♂️💚",
+    "manifest_nav": "Installation"
 }

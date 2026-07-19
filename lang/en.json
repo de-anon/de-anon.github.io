@@ -37,5 +37,16 @@
     "error_500_title": "500 — Internal Server Error",
     "error_500_heading": "500",
     "error_500_text": "Something went wrong on the server. Please try again later.",
-    "error_go_home": "Go back to homepage"
+    "error_go_home": "Go back to homepage",
+	"manifest_title": "Install PWA — De-Anon",
+    "manifest_heading": "Install De-Anon as an App",
+    "manifest_subtitle": "Follow the instructions for your platform – the site will work like a native app.",
+    "manifest_android_title": "Chrome (Android)",
+    "manifest_android_steps": "1. Open db.deanon.rf.gd in Chrome browser.\n2. Tap «⋮» (menu) in the top right corner.\n3. Choose «Install app» or «Add to Home screen».\n4. Confirm by tapping «Install».\n5. Done! The icon appears on your desktop.",
+    "manifest_android_screenshot_alt": "[Screenshot: Chrome menu with 'Install app' item]",
+    "manifest_ios_title": "Safari (iPhone / iPad)",
+    "manifest_ios_steps": "1. Open db.deanon.rf.gd in Safari.\n2. Tap the «Share» icon (square with arrow up) at the bottom.\n3. Scroll down and select «Add to Home Screen».\n4. Tap «Add» in the top right corner.\n5. Done! The icon appears on your home screen.",
+    "manifest_ios_screenshot_alt": "[Screenshot: Safari menu with 'Add to Home Screen']",
+    "manifest_conclusion": "Done! Now you have quick access to the hater database right from your phone screen. 🕵️‍♂️💚",
+    "manifest_nav": "Install"
 }

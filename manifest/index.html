@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title data-i18n="manifest_title">Установка PWA — Деанон</title>
+    <meta name="description" content="Установите Деанон как приложение на телефон или компьютер.">
+    <link rel="stylesheet" href="/style.css">
+    <link rel="icon" href="/favicon.ico">
+    <style>
+        /* Инлайн-стили для инструкции */
+        .manifest-guide {
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .manifest-guide h2 {
+            color: var(--accent, #00ff41);
+            margin-top: 2rem;
+            border-bottom: 2px solid var(--glass-border);
+            padding-bottom: 0.5rem;
+        }
+        .manifest-guide ol {
+            padding-left: 1.5rem;
+            line-height: 1.8;
+        }
+        .manifest-guide li {
+            margin-bottom: 0.8rem;
+        }
+        .manifest-guide .step-icon {
+            display: inline-block;
+            width: 28px;
+            text-align: center;
+            font-weight: bold;
+            margin-right: 8px;
+        }
+        .manifest-guide .badge {
+            display: inline-block;
+            background: var(--text-color);
+            color: var(--bg-color);
+            padding: 0.2rem 0.8rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-right: 0.5rem;
+        }
+        .manifest-guide .platform-tag {
+            display: inline-block;
+            padding: 0.2rem 1rem;
+            border-radius: 20px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            font-size: 0.9rem;
+        }
+        .manifest-guide .highlight {
+            background: rgba(0, 255, 65, 0.1);
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+        .manifest-guide .screenshot-placeholder {
+            background: var(--glass-bg);
+            border: 2px dashed var(--glass-border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            text-align: center;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+        @media (max-width: 600px) {
+            .manifest-guide {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Custom Cursor -->
+    <div class="cursor-dot" id="cursorDot"></div>
+    <div class="cursor-ring" id="cursorRing"></div>
+
+    <!-- Header -->
+    <header class="glass header">
+        <a href="/" class="logo" aria-label="De-Anon">
+            <span class="logo-text" data-i18n="logo_text">Деанон</span>
+        </a>
+        <nav class="nav">
+            <a href="/about/" data-i18n="about">О проекте</a>
+            <a href="/faq/" data-i18n="faq">FAQ</a>
+            <a href="/tos/" data-i18n="tos">Условия</a>
+            <a href="/privacy/" data-i18n="privacy">Приватность</a>
+        </nav>
+        <div class="controls">
+            <button class="btn-icon" id="bviBtn" aria-label="Accessibility">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/></svg>
+            </button>
+            <div class="dropdown" id="themeDropdown">
+                <button class="btn-icon dropdown-toggle" id="themeToggleBtn" aria-label="Theme">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+                </button>
+                <div class="dropdown-menu glass">
+                    <button class="dropdown-item" data-theme="system"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M2 3 A 1 1 0 0 0 1 4 L 1 24 A 1 1 0 0 0 2 25 L 15 25 L 15 27 L 12 27 A 1 1 0 0 0 12 29 L 20 29 A 1 1 0 1 0 20 27 L 17 27 L 17 25 L 30 25 A 1 1 0 0 0 31 24 L 31 4 A 1 1 0 0 0 30 3 L 2 3 z M 3 5 L 29 5 L 29 23 L 3 23 L 3 5 z" transform="scale(0.8)"/></svg><span data-i18n="theme_system">Системная</span></button>
+                    <button class="dropdown-item" data-theme="light"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M12 3V4M12 20V21M4 12H3M6.3 6.3L5.5 5.5M17.7 6.3L18.5 5.5M6.3 17.7L5.5 18.5M17.7 17.7L18.5 18.5M21 12H20M16 12C16 14.2 14.2 16 12 16C9.8 16 8 14.2 8 12C8 9.8 9.8 8 12 8C14.2 8 16 9.8 16 12Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span data-i18n="theme_light">Светлая</span></button>
+                    <button class="dropdown-item" data-theme="dark"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 32 32"><path d="M10.9 7.6c0 7.5 5.2 13.7 11.6 13.7 1.6 0 3.1-0.4 4.5-1.1-1.7 4.5-6 7.6-11.1 7.6-6.5 0-11.8-5.3-11.8-11.8 0-4.8 2.9-9 7-10.8-0.1 0.8-0.2 1.6-0.2 2.4z"/></svg><span data-i18n="theme_dark">Тёмная</span></button>
+                </div>
+            </div>
+            <div class="dropdown" id="langDropdown">
+                <button class="btn-icon dropdown-toggle" id="langToggleBtn" aria-label="Language">
+                    <svg viewBox="0 0 640 480" style="width:20px;height:15px;"><path fill="#fff" d="M0 0h640v160H0z"/><path fill="#0039a6" d="M0 160h640v160H0z"/><path fill="#d52b1e" d="M0 320h640v160H0z"/></svg>
+                </button>
+                <div class="dropdown-menu glass">
+                    <button class="dropdown-item" data-lang="ru"><svg viewBox="0 0 640 480" style="width:20px;height:15px;"><path fill="#fff" d="M0 0h640v160H0z"/><path fill="#0039a6" d="M0 160h640v160H0z"/><path fill="#d52b1e" d="M0 320h640v160H0z"/></svg><span>RU</span></button>
+                    <button class="dropdown-item" data-lang="en"><svg viewBox="0 0 640 480" style="width:20px;height:15px;"><path fill="#bd3d44" d="M0 0h640v480H0"/><path stroke="#fff" stroke-width="37" d="M0 55.3h640M0 129h640M0 203h640M0 277h640M0 351h640M0 425h640"/><path fill="#192f5d" d="M0 0h364.8v258.5H0"/></svg><span>EN</span></button>
+                    <button class="dropdown-item" data-lang="fr"><svg viewBox="0 0 640 480" style="width:20px;height:15px;"><path fill="#000091" d="M0 0h213.3v480H0z"/><path fill="#fff" d="M213.3 0h213.4v480H213.3z"/><path fill="#e1000f" d="M426.7 0H640v480H426.7z"/></svg><span>FR</span></button>
+                </div>
+            </div>
+            <button class="btn-icon" id="layoutToggle" aria-label="Toggle Layout">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <section class="glass manifest-guide">
+            <h1 data-i18n="manifest_heading" style="color:var(--accent, #00ff41); font-size: calc(32px * var(--ui-scale));">Установите Деанон как приложение</h1>
+            <p data-i18n="manifest_subtitle" style="font-size: calc(18px * var(--ui-scale)); opacity:0.9; margin-bottom:1.5rem;">Следуйте инструкции для вашей платформы — и сайт будет работать как нативное приложение.</p>
+
+            <!-- Android -->
+            <h2><span class="badge">Android</span> <span data-i18n="manifest_android_title">Chrome (Android)</span></h2>
+            <ol data-i18n="manifest_android_steps">
+                <li><span class="step-icon">1</span> Откройте сайт <span class="highlight">db.deanon.rf.gd</span> в браузере Chrome.</li>
+                <li><span class="step-icon">2</span> Нажмите на <strong>«⋮»</strong> (меню) в правом верхнем углу.</li>
+                <li><span class="step-icon">3</span> Выберите пункт <strong>«Установить приложение»</strong> или <strong>«Добавить на экран “Домой”»</strong>.</li>
+                <li><span class="step-icon">4</span> Подтвердите установку, нажав <strong>«Установить»</strong>.</li>
+                <li><span class="step-icon">5</span> Готово! Иконка появится на рабочем столе.</li>
+            </ol>
+            <div class="screenshot-placeholder" data-i18n="manifest_android_screenshot_alt">[Скриншот: меню Chrome с пунктом "Установить приложение"]</div>
+
+            <!-- iOS -->
+            <h2><span class="badge">iOS</span> <span data-i18n="manifest_ios_title">Safari (iPhone / iPad)</span></h2>
+            <ol data-i18n="manifest_ios_steps">
+                <li><span class="step-icon">1</span> Откройте сайт <span class="highlight">db.deanon.rf.gd</span> в Safari.</li>
+                <li><span class="step-icon">2</span> Нажмите на иконку <strong>«Поделиться»</strong> (квадрат со стрелкой вверх) внизу экрана.</li>
+                <li><span class="step-icon">3</span> Прокрутите список и выберите <strong>«На экран “Домой”»</strong>.</li>
+                <li><span class="step-icon">4</span> Нажмите <strong>«Добавить»</strong> в правом верхнем углу.</li>
+                <li><span class="step-icon">5</span> Готово! Иконка появится на главном экране.</li>
+            </ol>
+            <div class="screenshot-placeholder" data-i18n="manifest_ios_screenshot_alt">[Скриншот: меню Safari с пунктом "На экран “Домой”"]</div>
+
+            <!-- Заключение -->
+            <div style="margin-top: 2rem; padding: 1.5rem; background: var(--glass-bg); border-radius: 12px; border-left: 4px solid var(--accent, #00ff41);">
+                <p data-i18n="manifest_conclusion" style="margin:0; font-size: calc(18px * var(--ui-scale));">
+                    <strong>Готово!</strong> Теперь у вас есть быстрый доступ к базе хейтеров прямо с экрана телефона. 🕵️‍♂️💚
+                </p>
+            </div>
+        </section>
+    </main>
+
+    <!-- BVI Panel -->
+    <div class="bvi-panel glass" id="bviPanel">
+        <button class="bvi-close" id="bviClose">&times;</button>
+        <div class="bvi-group">
+            <label for="bviFontSize" data-i18n="bvi_font_size">Размер шрифта</label>
+            <input type="range" id="bviFontSize" min="14" max="24" value="16">
+        </div>
+        <div class="bvi-group">
+            <label for="bviUiSize" data-i18n="bvi_ui_size">Размер интерфейса</label>
+            <input type="range" id="bviUiSize" min="100" max="150" value="100">
+        </div>
+        <div class="bvi-group">
+            <label for="bviSerif" data-i18n="bvi_serif">Засечки</label>
+            <span class="switch">
+                <input type="checkbox" id="bviSerif">
+                <span class="slider"></span>
+            </span>
+        </div>
+    </div>
+
+    <footer class="footer glass"><p data-i18n="footer_text">© 2026 Деанон. Все права защищены.</p></footer>
+
+    <script src="/script.js"></script>
+</body>
+</html>

@@ -31,11 +31,13 @@ document.querySelectorAll('button, a, input').forEach(el => {
 
 // i18n System
 let currentLang = localStorage.getItem('lang') || 'ru';
+let translations = {}; // ← глобальное хранилище переводов
 
 async function loadLanguage(lang) {
     try {
         const res = await fetch(`/lang/${lang}.json`);
         const data = await res.json();
+        translations = data; // ← сохраняем все переводы
         document.querySelectorAll('[data-i18n]').forEach(el => {
             const key = el.getAttribute('data-i18n');
             if (data[key]) el.textContent = data[key];
@@ -270,8 +272,28 @@ window.addEventListener('storage', (e) => {
     }
 });
 
-// Init
-loadLanguage(currentLang);
+// ===== НОВАЯ ФУНКЦИЯ: добавляем ссылку на /manifest/ в навигацию =====
+function addManifestLink() {
+    const nav = document.querySelector('.nav');
+    if (!nav) return;
+    // Проверяем, есть ли уже такая ссылка
+    if (nav.querySelector('a[href="/manifest/"]')) return;
+
+    const link = document.createElement('a');
+    link.href = '/manifest/';
+    link.setAttribute('data-i18n', 'manifest_nav');
+    // Устанавливаем текст из текущих переводов (если есть)
+    link.textContent = translations['manifest_nav'] || 'Установка';
+    nav.appendChild(link);
+}
+
+// ===== ИНИЦИАЛИЗАЦИЯ =====
+// Загружаем язык, затем добавляем ссылку в меню
+loadLanguage(currentLang).then(() => {
+    addManifestLink();
+});
+
+// Загружаем карточки (только на главной)
 loadCards();
 
 // Регистрация Service Worker
