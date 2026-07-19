@@ -44,14 +44,6 @@
             font-weight: bold;
             margin-right: 0.5rem;
         }
-        .manifest-guide .platform-tag {
-            display: inline-block;
-            padding: 0.2rem 1rem;
-            border-radius: 20px;
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
-            font-size: 0.9rem;
-        }
         .manifest-guide .highlight {
             background: rgba(0, 255, 65, 0.1);
             padding: 0.2rem 0.6rem;
@@ -88,6 +80,12 @@
             border: 1px solid var(--glass-border);
             box-shadow: 0 4px 20px rgba(0,0,0,0.3);
             object-fit: contain;
+            /* ЗАПРЕТ ВЫДЕЛЕНИЯ */
+            user-select: none;
+            -webkit-user-drag: none;
+            user-drag: none;
+            pointer-events: none;
+            -webkit-touch-callout: none;
         }
         .carousel-btn {
             position: absolute;
@@ -217,10 +215,10 @@
             <!-- Карусель Android -->
             <div class="carousel-container" id="carouselAndroid">
                 <div class="carousel-track" id="trackAndroid">
-                    <div class="carousel-slide"><img src="/assets/manifest/Android/1.png" alt="Android шаг 1"></div>
-                    <div class="carousel-slide"><img src="/assets/manifest/Android/2.png" alt="Android шаг 2"></div>
-                    <div class="carousel-slide"><img src="/assets/manifest/Android/3.png" alt="Android шаг 3"></div>
-                    <div class="carousel-slide"><img src="/assets/manifest/Android/4.png" alt="Android шаг 4"></div>
+                    <div class="carousel-slide"><img src="/assets/manifest/Android/1.png" alt="Android шаг 1" draggable="false"></div>
+                    <div class="carousel-slide"><img src="/assets/manifest/Android/2.png" alt="Android шаг 2" draggable="false"></div>
+                    <div class="carousel-slide"><img src="/assets/manifest/Android/3.png" alt="Android шаг 3" draggable="false"></div>
+                    <div class="carousel-slide"><img src="/assets/manifest/Android/4.png" alt="Android шаг 4" draggable="false"></div>
                 </div>
                 <button class="carousel-btn prev" data-target="Android">‹</button>
                 <button class="carousel-btn next" data-target="Android">›</button>
@@ -239,10 +237,10 @@
             <!-- Карусель iOS -->
             <div class="carousel-container" id="carouselIOS">
                 <div class="carousel-track" id="trackIOS">
-                    <div class="carousel-slide"><img src="/assets/manifest/iOS/1.png" alt="iOS шаг 1"></div>
-                    <div class="carousel-slide"><img src="/assets/manifest/iOS/2.png" alt="iOS шаг 2"></div>
-                    <div class="carousel-slide"><img src="/assets/manifest/iOS/3.png" alt="iOS шаг 3"></div>
-                    <div class="carousel-slide"><img src="/assets/manifest/iOS/4.png" alt="iOS шаг 4"></div>
+                    <div class="carousel-slide"><img src="/assets/manifest/iOS/1.png" alt="iOS шаг 1" draggable="false"></div>
+                    <div class="carousel-slide"><img src="/assets/manifest/iOS/2.png" alt="iOS шаг 2" draggable="false"></div>
+                    <div class="carousel-slide"><img src="/assets/manifest/iOS/3.png" alt="iOS шаг 3" draggable="false"></div>
+                    <div class="carousel-slide"><img src="/assets/manifest/iOS/4.png" alt="iOS шаг 4" draggable="false"></div>
                 </div>
                 <button class="carousel-btn prev" data-target="IOS">‹</button>
                 <button class="carousel-btn next" data-target="IOS">›</button>
