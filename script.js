@@ -185,6 +185,7 @@ async function loadCards() {
         }
     } catch (e) {
         console.error('Failed to load cards', e);
+		console.error('Full error:', e);
         grid.innerHTML = '<p style="color:var(--text-color)">No cards found. Create cards/manifest.json</p>';
     }
 }
