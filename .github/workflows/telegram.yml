@@ -4,61 +4,68 @@ on:
   push:
     paths:
       - 'cards/*.json'
-      - 'cards/manifest.json'
 
 jobs:
-  send_cards:
+  send:
     runs-on: ubuntu-latest
     steps:
-      - name: Проверка репозитория
-        uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v4
         with:
           fetch-depth: 2
 
-      - name: Отправка в Telegram
+      - name: Send to Telegram
         env:
           TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: |
-          # Если токен или чат не заданы — выходим
+          # Проверяем секреты
           if [ -z "$TELEGRAM_TOKEN" ] || [ -z "$TELEGRAM_CHAT_ID" ]; then
-            echo "❌ Токен или Chat ID не заданы в секретах!"
+            echo "❌ Секреты не заданы!"
             exit 1
           fi
 
-          # Находим изменённые JSON-файлы (кроме manifest.json)
+          # Находим изменённые JSON-файлы
           CHANGED_FILES=$(git diff --name-only HEAD~1 HEAD -- 'cards/*.json' | grep -v 'manifest.json' || true)
 
           if [ -z "$CHANGED_FILES" ]; then
-            echo "📭 Нет новых карточек."
+            echo "📭 Новых карточек нет."
             exit 0
           fi
 
-          # Формируем сообщение
-          MESSAGE="🆕 *Новые карточки в Деанон!*%0A%0A"
-
+          # Отправляем каждую карточку
           for FILE in $CHANGED_FILES; do
-            # Читаем поля через jq
-            NAME=$(jq -r '.name // "Неизвестно"' "$FILE")
-            PHONE=$(jq -r '.phone // "Не указан"' "$FILE")
-            ADDRESS=$(jq -r '.address // "Не указан"' "$FILE")
+            echo "📄 Обрабатываем: $FILE"
+
+            # Безопасное чтение полей (если поля нет — ставим "Не указано")
+            NAME=$(jq -r '.name // "Не указано"' "$FILE" 2>/dev/null || echo "Не указано")
+            PHONE=$(jq -r '.phone // "Не указан"' "$FILE" 2>/dev/null || echo "Не указан")
+            ADDRESS=$(jq -r '.address // "Не указан"' "$FILE" 2>/dev/null || echo "Не указан")
             SOCIALS=$(jq -r '.socials | to_entries | map("\(.key): \(.value)") | join(", ")' "$FILE" 2>/dev/null || echo "Нет данных")
 
-            # Добавляем в сообщение
+            # Формируем сообщение
+            MESSAGE="🆕 *Новая карточка в Деанон!*%0A%0A"
             MESSAGE+="👤 *$NAME*%0A"
             MESSAGE+="📱 $PHONE%0A"
             MESSAGE+="📍 $ADDRESS%0A"
-            MESSAGE+="🔗 $SOCIALS%0A"
-            MESSAGE+="%0A"
+            MESSAGE+="🔗 $SOCIALS%0A%0A"
+            MESSAGE+="🔗 Сайт: https://db.deanon.rf.gd/"
+
+            echo "📨 Отправляем: $NAME"
+
+            # Отправляем в Telegram
+            RESPONSE=$(curl -s -X POST "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendMessage" \
+              -d "chat_id=$TELEGRAM_CHAT_ID" \
+              -d "text=$MESSAGE" \
+              -d "parse_mode=Markdown")
+
+            # Проверяем ответ
+            if echo "$RESPONSE" | grep -q '"ok":true'; then
+              echo "✅ Отправлено: $NAME"
+            else
+              echo "❌ Ошибка отправки: $RESPONSE"
+              exit 1
+            fi
           done
 
-          MESSAGE+="🔗 *Сайт:* https://db.deanon.rf.gd/%0A"
-          MESSAGE+="📌 *Канал:* @deanon_db"
-
-          # Отправляем
-          curl -s -X POST "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendMessage" \
-            -d "chat_id=$TELEGRAM_CHAT_ID" \
-            -d "text=$MESSAGE" \
-            -d "parse_mode=Markdown"
-
-          echo "✅ Сообщение отправлено!"
+          echo "✅ Все карточки отправлены!"
