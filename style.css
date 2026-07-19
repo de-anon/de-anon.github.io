@@ -7,6 +7,8 @@
     --ui-scale: 1;
     --font-size-base: 16px;
     --font-family: 'Courier New', monospace;
+    --nav-height: 70px;
+    --header-padding: 15px;
 }
 
 [data-theme="light"] {
@@ -26,7 +28,16 @@
 body.force-desktop { min-width: 800px; }
 body.force-mobile { max-width: 600px; margin: 0 auto; }
 
-* { margin: 0; padding: 0; box-sizing: border-box; cursor: none; }
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    cursor: none;
+}
+
+html {
+    scroll-behavior: smooth;
+}
 
 body {
     background: var(--bg-color);
@@ -35,6 +46,7 @@ body {
     font-size: var(--font-size-base);
     overflow-x: hidden;
     min-height: 100vh;
+    line-height: 1.6;
 }
 
 /* Scanline Pseudo-element */
@@ -59,8 +71,24 @@ body::before {
 }
 
 /* Custom Cursor */
-.cursor-dot { width: 8px; height: 8px; background: var(--text-color); border-radius: 50%; position: fixed; z-index: 10000; pointer-events: none; transition: transform 0.1s; }
-.cursor-ring { width: 30px; height: 30px; border: 2px solid var(--text-color); border-radius: 50%; position: fixed; z-index: 10000; pointer-events: none; transition: transform 0.2s, width 0.2s, height 0.2s; }
+.cursor-dot {
+    width: 8px; height: 8px;
+    background: var(--text-color);
+    border-radius: 50%;
+    position: fixed;
+    z-index: 10000;
+    pointer-events: none;
+    transition: transform 0.1s;
+}
+.cursor-ring {
+    width: 30px; height: 30px;
+    border: 2px solid var(--text-color);
+    border-radius: 50%;
+    position: fixed;
+    z-index: 10000;
+    pointer-events: none;
+    transition: transform 0.2s, width 0.2s, height 0.2s;
+}
 
 /* Custom Scrollbar */
 ::-webkit-scrollbar { width: 10px; }
@@ -68,155 +96,698 @@ body::before {
 ::-webkit-scrollbar-thumb { background: var(--text-color); border-radius: 5px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--text-color); opacity: 0.8; }
 
-/* Header */
+/* ============================================
+   HEADER & НАВИГАЦИЯ
+   ============================================ */
 .header {
-    position: sticky; top: 0; z-index: 100;
-    display: flex; justify-content: space-between; align-items: center;
-    padding: calc(15px * var(--ui-scale)) calc(30px * var(--ui-scale));
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: calc(12px * var(--ui-scale)) calc(20px * var(--ui-scale));
+    min-height: var(--nav-height);
+    gap: 10px;
 }
-/* Логотип как ссылка */
+
+/* Логотип */
 .logo {
     display: flex;
     align-items: center;
     gap: 10px;
     text-decoration: none;
     color: var(--text-color);
+    flex-shrink: 0;
 }
-
-/* Псевдоэлемент с картинкой */
 .logo::before {
     content: '';
     display: block;
-    width: 48px;          /* размер картинки */
-    height: 48px;
+    width: 42px;
+    height: 42px;
     background: url('/assets/logo.webp') no-repeat center / contain;
-    filter: var(--logo-filter, none); /* для инверсии в тёмной теме */
+    filter: var(--logo-filter, none);
     flex-shrink: 0;
+    transition: filter 0.3s;
 }
-
-/* Текст логотипа */
 .logo-text {
-    font-size: calc(24px * var(--ui-scale));
+    font-size: calc(20px * var(--ui-scale));
     font-weight: bold;
     text-transform: uppercase;
     letter-spacing: 2px;
+    white-space: nowrap;
 }
-
-/* Мигающее подчёркивание (как было) */
 .logo-text::after {
     content: '_';
     animation: blink 1s infinite;
 }
-
 @keyframes blink {
     0%, 50% { opacity: 1; }
     51%, 100% { opacity: 0; }
 }
-@keyframes blink { 0%, 50% { opacity: 1; } 51%, 100% { opacity: 0; } }
 
-.controls { display: flex; gap: 15px; align-items: center; }
-.btn-icon {
-    background: transparent; border: 1px solid var(--glass-border); color: var(--text-color);
-    width: 40px; height: 40px; border-radius: 8px; display: flex; align-items: center; justify-content: center;
-    transition: all 0.3s; position: relative;
-}
-.btn-icon:hover, .btn-icon.active { background: var(--text-color); color: var(--bg-color); }
-
-.dropdown { position: relative; }
-.dropdown-menu {
-    position: absolute; right: 0; top: 50px; min-width: 160px; border-radius: 8px; padding: 10px;
-    display: none; flex-direction: column; gap: 5px; z-index: 200;
-}
-.dropdown-menu.active { display: flex; animation: fadeIn 0.3s; }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
-.dropdown-item {
-    background: transparent; border: none; color: var(--text-color); padding: 8px 12px; text-align: left;
-    border-radius: 5px; display: flex; align-items: center; gap: 10px; font-size: 16px; transition: background 0.2s;
-}
-.dropdown-item:hover { background: rgba(255,255,255,0.1); }
-
-/* Main */
-.main-content { padding: calc(20px * var(--ui-scale)); }
-.controls-panel {
-    padding: calc(20px * var(--ui-scale)); border-radius: 12px; margin-bottom: 20px;
-    display: flex; flex-direction: column; gap: 15px;
-}
-.search-input {
-    background: transparent; border: none; border-bottom: 2px solid var(--glass-border); color: var(--text-color);
-    font-size: calc(18px * var(--ui-scale)); padding: 10px; outline: none; width: 100%;
-}
-.search-input:focus { border-color: var(--text-color); }
-.filters { display: flex; gap: 10px; flex-wrap: wrap; }
-.filter-btn {
-    background: transparent; border: 1px solid var(--glass-border); color: var(--text-color); padding: 8px 16px;
-    border-radius: 20px; cursor: none; transition: all 0.3s; font-family: var(--font-family);
-}
-.filter-btn.active, .filter-btn:hover { background: var(--text-color); color: var(--bg-color); border-color: var(--text-color); }
-
-/* Cards */
-.cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
-.card {
-    border-radius: 12px; overflow: hidden; transition: transform 0.3s, box-shadow 0.3s; position: relative;
-}
-.card:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0, 255, 65, 0.1); }
-.card-img { width: 100%; height: 300px; object-fit: cover; filter: grayscale(50%) contrast(120%); transition: filter 0.3s; }
-.card:hover .card-img { filter: grayscale(0%) contrast(100%); }
-.card-body { padding: 15px; }
-.card-name { font-size: 20px; font-weight: bold; margin-bottom: 5px; }
-.card-info { font-size: 14px; opacity: 0.8; margin-bottom: 5px; }
-
-/* Modal */
-.modal-overlay {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8);
-    backdrop-filter: blur(10px); z-index: 1000; display: none; justify-content: center; align-items: center;
-}
-.modal-overlay.active { display: flex; animation: fadeIn 0.3s; }
-.modal-content {
-    max-width: 800px; width: 90%; max-height: 90vh; overflow-y: auto; border-radius: 16px; padding: 30px;
-    position: relative;
-}
-.modal-close { position: absolute; top: 20px; right: 20px; font-size: 24px; background: none; border: none; color: var(--text-color); }
-
-/* BVI Panel */
-.bvi-panel {
-    position: fixed; top: 0; right: 0; height: 100vh; width: 300px; padding: 30px; z-index: 500;
-    transform: translateX(100%); transition: transform 0.4s; display: flex; flex-direction: column; gap: 20px;
-}
-.bvi-panel.active { transform: translateX(0); }
-.bvi-close { position: absolute; top: 20px; right: 20px; font-size: 30px; color: var(--text-color); background: none; border: none; }
-.bvi-group { display: flex; flex-direction: column; gap: 10px; }
-.bvi-group label { font-size: 18px; }
-
-/* Toggle Switch */
-.switch { position: relative; display: inline-block; width: 60px; height: 34px; }
-.switch input { opacity: 0; width: 0; height: 0; }
-.slider { position: absolute; cursor: none; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px; }
-.slider:before { position: absolute; content: ""; height: 26px; width: 26px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
-input:checked + .slider { background-color: var(--text-color); }
-input:checked + .slider:before { transform: translateX(26px); background: var(--bg-color); }
-
-/* Responsive */
-@media (max-width: 768px) {
-    .cards-grid { grid-template-columns: 1fr; }
-    .header { padding: 15px; }
-    .controls-panel { flex-direction: column; }
-}
-
-/* Navigation */
+/* Навигация */
 .nav {
     display: flex;
-    gap: 20px;
+    align-items: center;
+    gap: 15px;
+    transition: all 0.3s ease;
 }
 .nav a {
     color: var(--text-color);
     text-decoration: none;
-    font-size: calc(16px * var(--ui-scale));
+    font-size: calc(14px * var(--ui-scale));
     transition: opacity 0.3s;
+    white-space: nowrap;
 }
 .nav a:hover {
     opacity: 0.7;
 }
 
+/* Бургер-кнопка (показывается только на мобилках) */
+.burger-btn {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    background: none;
+    border: none;
+    color: var(--text-color);
+    width: 36px;
+    height: 36px;
+    padding: 6px;
+    cursor: pointer;
+    z-index: 101;
+    border: 1px solid var(--glass-border);
+    border-radius: 8px;
+    background: var(--glass-bg);
+    transition: all 0.3s;
+}
+.burger-btn:hover {
+    background: var(--text-color);
+    color: var(--bg-color);
+}
+.burger-btn span {
+    display: block;
+    width: 100%;
+    height: 2px;
+    background: currentColor;
+    border-radius: 2px;
+    transition: all 0.3s ease;
+}
+.burger-btn.active span:nth-child(1) {
+    transform: rotate(45deg) translate(5px, 5px);
+}
+.burger-btn.active span:nth-child(2) {
+    opacity: 0;
+}
+.burger-btn.active span:nth-child(3) {
+    transform: rotate(-45deg) translate(5px, -5px);
+}
+
+/* Контролы (иконки справа) */
+.controls {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.btn-icon {
+    background: transparent;
+    border: 1px solid var(--glass-border);
+    color: var(--text-color);
+    width: 38px;
+    height: 38px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+    position: relative;
+}
+.btn-icon:hover,
+.btn-icon.active {
+    background: var(--text-color);
+    color: var(--bg-color);
+}
+
+/* Dropdown */
+.dropdown { position: relative; }
+.dropdown-menu {
+    position: absolute;
+    right: 0;
+    top: 45px;
+    min-width: 160px;
+    border-radius: 8px;
+    padding: 10px;
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    z-index: 200;
+}
+.dropdown-menu.active {
+    display: flex;
+    animation: fadeIn 0.3s;
+}
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.dropdown-item {
+    background: transparent;
+    border: none;
+    color: var(--text-color);
+    padding: 8px 12px;
+    text-align: left;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    transition: background 0.2s;
+}
+.dropdown-item:hover {
+    background: rgba(255,255,255,0.1);
+}
+
+/* ============================================
+   MAIN CONTENT
+   ============================================ */
+.main-content {
+    padding: calc(15px * var(--ui-scale));
+    max-width: 1400px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+/* Controls Panel (поиск + фильтры) */
+.controls-panel {
+    padding: calc(18px * var(--ui-scale));
+    border-radius: 12px;
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+.search-input {
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid var(--glass-border);
+    color: var(--text-color);
+    font-size: calc(16px * var(--ui-scale));
+    padding: 10px 5px;
+    outline: none;
+    width: 100%;
+    transition: border-color 0.3s;
+}
+.search-input:focus {
+    border-color: var(--text-color);
+}
+.search-input::placeholder {
+    opacity: 0.5;
+}
+.filters {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+.filter-btn {
+    background: transparent;
+    border: 1px solid var(--glass-border);
+    color: var(--text-color);
+    padding: 6px 14px;
+    border-radius: 20px;
+    cursor: none;
+    transition: all 0.3s;
+    font-family: var(--font-family);
+    font-size: calc(13px * var(--ui-scale));
+}
+.filter-btn.active,
+.filter-btn:hover {
+    background: var(--text-color);
+    color: var(--bg-color);
+    border-color: var(--text-color);
+}
+
+/* Cards Grid */
+.cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+}
+.card {
+    border-radius: 12px;
+    overflow: hidden;
+    transition: transform 0.3s, box-shadow 0.3s;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 255, 65, 0.1);
+}
+.card-img {
+    width: 100%;
+    height: 260px;
+    object-fit: cover;
+    filter: grayscale(50%) contrast(120%);
+    transition: filter 0.3s;
+}
+.card:hover .card-img {
+    filter: grayscale(0%) contrast(100%);
+}
+.card-body {
+    padding: 15px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.card-name {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 2px;
+}
+.card-info {
+    font-size: 13px;
+    opacity: 0.8;
+}
+
+/* Modal */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.8);
+    backdrop-filter: blur(10px);
+    z-index: 1000;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+.modal-overlay.active {
+    display: flex;
+    animation: fadeIn 0.3s;
+}
+.modal-content {
+    max-width: 700px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    border-radius: 16px;
+    padding: 25px;
+    position: relative;
+}
+.modal-close {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    font-size: 28px;
+    background: none;
+    border: none;
+    color: var(--text-color);
+    cursor: pointer;
+    z-index: 10;
+    transition: transform 0.3s;
+}
+.modal-close:hover {
+    transform: rotate(90deg);
+}
+.modal-content img {
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
+
+/* BVI Panel */
+.bvi-panel {
+    position: fixed;
+    top: 0;
+    right: 0;
+    height: 100vh;
+    width: 300px;
+    padding: 30px 25px;
+    z-index: 500;
+    transform: translateX(100%);
+    transition: transform 0.4s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    overflow-y: auto;
+}
+.bvi-panel.active {
+    transform: translateX(0);
+}
+.bvi-close {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    font-size: 30px;
+    color: var(--text-color);
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+.bvi-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.bvi-group label {
+    font-size: 16px;
+}
+
+/* Toggle Switch */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+}
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+.slider {
+    position: absolute;
+    cursor: none;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 34px;
+}
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+input:checked + .slider {
+    background-color: var(--text-color);
+}
+input:checked + .slider:before {
+    transform: translateX(26px);
+    background: var(--bg-color);
+}
+
+/* Footer */
+.footer {
+    text-align: center;
+    padding: 20px;
+    margin-top: 30px;
+    font-size: 14px;
+    opacity: 0.7;
+}
+.footer p {
+    margin: 0;
+}
+
+/* ============================================
+   ТЕМНАЯ ТЕМА — ИНВЕРСИЯ ЛОГО
+   ============================================ */
 [data-theme="dark"] .logo::before {
     --logo-filter: invert(1) brightness(1.2);
+}
+
+/* ============================================
+   АДАПТИВ — ПИЗДАТЫЙ И РОВНЫЙ
+   ============================================ */
+
+/* Планшеты и маленькие ноуты (768–1024px) */
+@media (max-width: 1024px) {
+    .cards-grid {
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        gap: 15px;
+    }
+    .header {
+        padding: 12px 16px;
+    }
+    .logo-text {
+        font-size: calc(18px * var(--ui-scale));
+    }
+    .logo::before {
+        width: 36px;
+        height: 36px;
+    }
+    .nav a {
+        font-size: calc(13px * var(--ui-scale));
+    }
+    .controls {
+        gap: 8px;
+    }
+    .btn-icon {
+        width: 34px;
+        height: 34px;
+    }
+}
+
+/* Мобилки (до 768px) — ТУТ БУРГЕР! */
+@media (max-width: 768px) {
+    /* Бургер появляется */
+    .burger-btn {
+        display: flex;
+        order: 1;
+    }
+
+    /* Навигация скрыта по умолчанию */
+    .nav {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100vh;
+        background: var(--bg-color);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 25px;
+        padding: 80px 20px 40px;
+        transform: translateX(100%);
+        transition: transform 0.4s ease;
+        z-index: 99;
+        opacity: 0.98;
+        border: none;
+    }
+    .nav.open {
+        transform: translateX(0);
+    }
+    .nav a {
+        font-size: calc(22px * var(--ui-scale));
+        font-weight: bold;
+        letter-spacing: 1px;
+        padding: 8px 20px;
+        border-bottom: 2px solid transparent;
+        transition: all 0.3s;
+    }
+    .nav a:hover {
+        border-bottom-color: var(--text-color);
+        opacity: 1;
+    }
+
+    /* Корректировка хедера — контролы справа от бургера */
+    .header {
+        padding: 10px 14px;
+        gap: 8px;
+        flex-wrap: nowrap;
+    }
+    .controls {
+        gap: 6px;
+        order: 2;
+    }
+    .logo {
+        order: 0;
+        flex-shrink: 1;
+        min-width: 0;
+    }
+    .logo-text {
+        font-size: calc(16px * var(--ui-scale));
+        letter-spacing: 1px;
+    }
+    .logo::before {
+        width: 32px;
+        height: 32px;
+    }
+
+    /* Карточки в 1 колонку */
+    .cards-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+    .card-img {
+        height: 220px;
+    }
+
+    /* Контрол-панель */
+    .controls-panel {
+        padding: 14px;
+        gap: 10px;
+    }
+    .search-input {
+        font-size: 15px;
+        padding: 8px 4px;
+    }
+    .filters {
+        gap: 6px;
+    }
+    .filter-btn {
+        padding: 5px 12px;
+        font-size: 12px;
+    }
+
+    /* Модалка */
+    .modal-content {
+        padding: 20px 16px;
+        max-width: 100%;
+        margin: 10px;
+    }
+    .modal-content img {
+        max-height: 250px;
+    }
+
+    /* BVI панель */
+    .bvi-panel {
+        width: 100%;
+        max-width: 320px;
+        padding: 25px 20px;
+    }
+
+    /* Дропдауны на мобилках чуть сдвигаем */
+    .dropdown-menu {
+        right: -10px;
+        min-width: 140px;
+    }
+
+    /* Курсор на мобилках скрываем (он мешает) */
+    .cursor-dot,
+    .cursor-ring {
+        display: none !important;
+    }
+    /* Возвращаем стандартный курсор на мобилках */
+    * {
+        cursor: auto !important;
+    }
+    button, a, input {
+        cursor: pointer !important;
+    }
+
+    /* Сканирующая линия на мобилках тоньше */
+    body::before {
+        background-size: 100% 2px;
+        opacity: 0.2;
+    }
+
+    /* Main контент меньше отступы */
+    .main-content {
+        padding: 10px;
+    }
+}
+
+/* Очень маленькие экраны (до 480px) */
+@media (max-width: 480px) {
+    .header {
+        padding: 8px 10px;
+        min-height: 56px;
+    }
+    .logo::before {
+        width: 28px;
+        height: 28px;
+    }
+    .logo-text {
+        font-size: 14px;
+        letter-spacing: 0.5px;
+    }
+    .btn-icon {
+        width: 30px;
+        height: 30px;
+        border-radius: 6px;
+    }
+    .btn-icon svg {
+        width: 16px;
+        height: 16px;
+    }
+    .controls {
+        gap: 4px;
+    }
+    .burger-btn {
+        width: 30px;
+        height: 30px;
+        padding: 5px;
+    }
+    .card-img {
+        height: 180px;
+    }
+    .card-name {
+        font-size: 16px;
+    }
+    .card-info {
+        font-size: 12px;
+    }
+    .controls-panel {
+        padding: 12px;
+    }
+    .search-input {
+        font-size: 14px;
+        padding: 6px 4px;
+    }
+    .filter-btn {
+        font-size: 11px;
+        padding: 4px 10px;
+    }
+    .filters {
+        gap: 4px;
+    }
+    .modal-content {
+        padding: 16px 12px;
+    }
+    .bvi-panel {
+        max-width: 280px;
+        padding: 20px 16px;
+    }
+    .bvi-group label {
+        font-size: 14px;
+    }
+}
+
+/* Альбомная ориентация на мобилках */
+@media (max-width: 900px) and (orientation: landscape) {
+    .nav.open {
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 15px;
+        padding: 60px 20px 30px;
+        align-items: center;
+        align-content: center;
+    }
+    .nav a {
+        font-size: 18px;
+        padding: 6px 14px;
+    }
+    .cards-grid {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    }
+}
+
+/* ============================================
+   УЛУЧШЕНИЯ ДЛЯ БОЛЬШИХ ЭКРАНОВ
+   ============================================ */
+@media (min-width: 1400px) {
+    .main-content {
+        padding: calc(25px * var(--ui-scale));
+    }
+    .cards-grid {
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 25px;
+    }
+    .card-img {
+        height: 320px;
+    }
 }
