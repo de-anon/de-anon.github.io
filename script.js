@@ -146,6 +146,24 @@ if (bviSerif) {
     });
 }
 
+// Восстановление состояния засечек
+const savedSerif = localStorage.getItem('bviSerif');
+if (savedSerif === 'serif') {
+    const serifCheckbox = document.getElementById('bviSerif');
+    if (serifCheckbox) {
+        serifCheckbox.checked = true;
+        document.documentElement.style.setProperty('--font-family', 'Georgia, serif');
+    }
+}
+// При изменении сохраняем
+if (bviSerif) {
+    bviSerif.addEventListener('change', e => {
+        const isChecked = e.target.checked;
+        localStorage.setItem('bviSerif', isChecked ? 'serif' : 'sans');
+        document.documentElement.style.setProperty('--font-family', isChecked ? 'Georgia, serif' : "'Courier New', monospace");
+    });
+}
+
 // Layout Toggle
 const layoutToggle = document.getElementById('layoutToggle');
 if (layoutToggle) {
