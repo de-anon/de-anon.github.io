@@ -37,17 +37,15 @@ async function loadLanguage(lang) {
         document.documentElement.lang = lang;
         localStorage.setItem('lang', lang);
 
-        // Update flag
         const flags = {
             ru: '<svg viewBox="0 0 640 480" style="width:20px;height:15px;"><path fill="#fff" d="M0 0h640v160H0z"/><path fill="#0039a6" d="M0 160h640v160H0z"/><path fill="#d52b1e" d="M0 320h640v160H0z"/></svg>',
             en: '<svg viewBox="0 0 640 480" style="width:20px;height:15px;"><path fill="#bd3d44" d="M0 0h640v480H0"/><path stroke="#fff" stroke-width="37" d="M0 55.3h640M0 129h640M0 203h640M0 277h640M0 351h640M0 425h640"/><path fill="#192f5d" d="M0 0h364.8v258.5H0"/></svg>',
             fr: '<svg viewBox="0 0 640 480" style="width:20px;height:15px;"><path fill="#000091" d="M0 0h213.3v480H0z"/><path fill="#fff" d="M213.3 0h213.4v480H213.3z"/><path fill="#e1000f" d="M426.7 0H640v480H426.7z"/></svg>'
         };
 
-        // Обновляем флаг в кнопке
-        document.getElementById('langToggleBtn').innerHTML = flags[lang];
+        const langToggle = document.getElementById('langToggleBtn');
+        if (langToggle) langToggle.innerHTML = flags[lang];
 
-        // Обновляем заголовок вкладки
         const path = window.location.pathname;
         let pageKey = 'page_title_main';
         if (path.includes('/about/')) pageKey = 'page_title_about';
@@ -67,7 +65,8 @@ document.querySelectorAll('[data-lang]').forEach(btn => {
     btn.addEventListener('click', () => {
         const lang = btn.getAttribute('data-lang');
         loadLanguage(lang);
-        document.querySelector('#langDropdown .dropdown-menu').classList.remove('active');
+        const dropdown = document.querySelector('#langDropdown .dropdown-menu');
+        if (dropdown) dropdown.classList.remove('active');
     });
 });
 
@@ -86,61 +85,90 @@ function applyTheme(theme) {
 themeBtns.forEach(btn => {
     btn.addEventListener('click', () => {
         applyTheme(btn.getAttribute('data-theme'));
-        document.querySelector('#themeDropdown .dropdown-menu').classList.remove('active');
+        const dropdown = document.querySelector('#themeDropdown .dropdown-menu');
+        if (dropdown) dropdown.classList.remove('active');
     });
 });
 applyTheme(localStorage.getItem('theme') || 'dark');
 
 // Dropdown toggles
-document.getElementById('themeToggleBtn').addEventListener('click', (e) => {
-    e.stopPropagation();
-    document.querySelector('#themeDropdown .dropdown-menu').classList.toggle('active');
-    document.querySelector('#langDropdown .dropdown-menu').classList.remove('active');
-});
-document.getElementById('langToggleBtn').addEventListener('click', (e) => {
-    e.stopPropagation();
-    document.querySelector('#langDropdown .dropdown-menu').classList.toggle('active');
-    document.querySelector('#themeDropdown .dropdown-menu').classList.remove('active');
-});
+const themeToggleBtn = document.getElementById('themeToggleBtn');
+const langToggleBtn = document.getElementById('langToggleBtn');
+if (themeToggleBtn) {
+    themeToggleBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const themeMenu = document.querySelector('#themeDropdown .dropdown-menu');
+        const langMenu = document.querySelector('#langDropdown .dropdown-menu');
+        if (themeMenu) themeMenu.classList.toggle('active');
+        if (langMenu) langMenu.classList.remove('active');
+    });
+}
+if (langToggleBtn) {
+    langToggleBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const langMenu = document.querySelector('#langDropdown .dropdown-menu');
+        const themeMenu = document.querySelector('#themeDropdown .dropdown-menu');
+        if (langMenu) langMenu.classList.toggle('active');
+        if (themeMenu) themeMenu.classList.remove('active');
+    });
+}
 document.body.addEventListener('click', () => {
     document.querySelectorAll('.dropdown-menu').forEach(m => m.classList.remove('active'));
 });
 
 // BVI Panel
 const bviPanel = document.getElementById('bviPanel');
-document.getElementById('bviBtn').addEventListener('click', () => bviPanel.classList.add('active'));
-document.getElementById('bviClose').addEventListener('click', () => bviPanel.classList.remove('active'));
+const bviBtn = document.getElementById('bviBtn');
+const bviClose = document.getElementById('bviClose');
+if (bviBtn && bviPanel) {
+    bviBtn.addEventListener('click', () => bviPanel.classList.add('active'));
+}
+if (bviClose && bviPanel) {
+    bviClose.addEventListener('click', () => bviPanel.classList.remove('active'));
+}
 
-document.getElementById('bviFontSize').addEventListener('input', e => {
-    document.documentElement.style.setProperty('--font-size-base', e.target.value + 'px');
-});
-document.getElementById('bviUiSize').addEventListener('input', e => {
-    document.documentElement.style.setProperty('--ui-scale', e.target.value / 100);
-});
-document.getElementById('bviSerif').addEventListener('change', e => {
-    document.documentElement.style.setProperty('--font-family', e.target.checked ? 'Georgia, serif' : "'Courier New', monospace");
-});
+const bviFontSize = document.getElementById('bviFontSize');
+if (bviFontSize) {
+    bviFontSize.addEventListener('input', e => {
+        document.documentElement.style.setProperty('--font-size-base', e.target.value + 'px');
+    });
+}
+const bviUiSize = document.getElementById('bviUiSize');
+if (bviUiSize) {
+    bviUiSize.addEventListener('input', e => {
+        document.documentElement.style.setProperty('--ui-scale', e.target.value / 100);
+    });
+}
+const bviSerif = document.getElementById('bviSerif');
+if (bviSerif) {
+    bviSerif.addEventListener('change', e => {
+        document.documentElement.style.setProperty('--font-family', e.target.checked ? 'Georgia, serif' : "'Courier New', monospace");
+    });
+}
 
 // Layout Toggle
-document.getElementById('layoutToggle').addEventListener('click', () => {
-    document.body.classList.toggle('force-desktop');
-    document.body.classList.toggle('force-mobile');
-});
+const layoutToggle = document.getElementById('layoutToggle');
+if (layoutToggle) {
+    layoutToggle.addEventListener('click', () => {
+        document.body.classList.toggle('force-desktop');
+        document.body.classList.toggle('force-mobile');
+    });
+}
 
-// Cards Autoload System
+// Cards Autoload System (only on main page)
 async function loadCards() {
+    const grid = document.getElementById('cardsGrid');
+    if (!grid) return; // exit if not on main page
+
     try {
-        // ВАЖНО: Для работы автозагрузки создай файл cards/manifest.json 
-        // с массивом названий файлов, например: ["card1.json", "card2.json"]
-        const res = await fetch('cards/manifest.json');
+        const res = await fetch('/cards/manifest.json');
         const files = await res.json();
-        const grid = document.getElementById('cardsGrid');
         grid.innerHTML = '';
-        
+
         for (const file of files) {
-            const cardRes = await fetch(`cards/${file}`);
+            const cardRes = await fetch(`/cards/${file}`);
             const card = await cardRes.json();
-            
+
             const cardEl = document.createElement('div');
             cardEl.className = 'card glass';
             cardEl.setAttribute('data-type', card.type || 'all');
@@ -157,12 +185,13 @@ async function loadCards() {
         }
     } catch (e) {
         console.error('Failed to load cards', e);
-        document.getElementById('cardsGrid').innerHTML = '<p style="color:var(--text-color)">No cards found. Create cards/manifest.json</p>';
+        grid.innerHTML = '<p style="color:var(--text-color)">No cards found. Create cards/manifest.json</p>';
     }
 }
 
 function openModal(card) {
     const modal = document.getElementById('modalContent');
+    if (!modal) return;
     modal.innerHTML = `
         <button class="modal-close" id="modalClose">&times;</button>
         <img src="${card.photo}" style="width:100%; max-height:400px; object-fit:cover; border-radius:12px; margin-bottom:20px;">
@@ -174,22 +203,33 @@ function openModal(card) {
     document.getElementById('modalOverlay').classList.add('active');
     document.getElementById('modalClose').addEventListener('click', closeModal);
 }
-function closeModal() { document.getElementById('modalOverlay').classList.remove('active'); }
-document.getElementById('modalOverlay').addEventListener('click', e => { if (e.target.id === 'modalOverlay') closeModal(); });
+function closeModal() {
+    document.getElementById('modalOverlay').classList.remove('active');
+}
+const modalOverlay = document.getElementById('modalOverlay');
+if (modalOverlay) {
+    modalOverlay.addEventListener('click', e => { if (e.target.id === 'modalOverlay') closeModal(); });
+}
 
-// Search & Filter
-document.getElementById('searchInput').addEventListener('input', filterCards);
-document.querySelectorAll('.filter-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        filterCards();
+// Search & Filter (only on main page)
+const searchInput = document.getElementById('searchInput');
+if (searchInput) {
+    searchInput.addEventListener('input', filterCards);
+}
+const filterBtns = document.querySelectorAll('.filter-btn');
+if (filterBtns.length) {
+    filterBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            filterBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            filterCards();
+        });
     });
-});
+}
 
 function filterCards() {
-    const term = document.getElementById('searchInput').value.toLowerCase();
-    const activeFilter = document.querySelector('.filter-btn.active').getAttribute('data-filter');
+    const term = document.getElementById('searchInput')?.value?.toLowerCase() || '';
+    const activeFilter = document.querySelector('.filter-btn.active')?.getAttribute('data-filter') || 'all';
     document.querySelectorAll('.card').forEach(card => {
         const text = card.textContent.toLowerCase();
         const type = card.getAttribute('data-type');
@@ -199,7 +239,7 @@ function filterCards() {
     });
 }
 
-// Синхронизация языка между вкладками
+// Synchronize language across tabs
 window.addEventListener('storage', (e) => {
     if (e.key === 'lang') {
         const newLang = e.newValue;
