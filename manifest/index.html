@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="/style.css">
     <link rel="icon" href="/favicon.ico">
     <style>
-        /* Инлайн-стили для инструкции */
+        /* Инлайн-стили для инструкции и каруселей */
         .manifest-guide {
             padding: 2rem;
             max-width: 800px;
@@ -58,19 +58,97 @@
             border-radius: 4px;
             font-family: monospace;
         }
-        .manifest-guide .screenshot-placeholder {
+
+        /* Карусель */
+        .carousel-container {
+            margin: 1.5rem 0;
             background: var(--glass-bg);
-            border: 2px dashed var(--glass-border);
             border-radius: 12px;
-            padding: 1.5rem;
-            margin: 1rem 0;
-            text-align: center;
+            padding: 0.5rem 0;
+            border: 1px solid var(--glass-border);
+            position: relative;
+            overflow: hidden;
+        }
+        .carousel-track {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+        }
+        .carousel-slide {
+            min-width: 100%;
+            box-sizing: border-box;
+            padding: 0.5rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .carousel-slide img {
+            max-width: 100%;
+            max-height: 450px;
+            border-radius: 8px;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            object-fit: contain;
+        }
+        .carousel-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
             color: var(--text-color);
-            opacity: 0.7;
+            font-size: 2rem;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            z-index: 10;
+            border-radius: 50%;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.3s;
+            backdrop-filter: blur(4px);
+        }
+        .carousel-btn:hover {
+            background: var(--text-color);
+            color: var(--bg-color);
+        }
+        .carousel-btn.prev {
+            left: 10px;
+        }
+        .carousel-btn.next {
+            right: 10px;
+        }
+        .carousel-dots {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            padding: 0.8rem 0 0.3rem;
+        }
+        .carousel-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--glass-border);
+            border: none;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .carousel-dot.active {
+            background: var(--text-color);
+            box-shadow: 0 0 8px var(--text-color);
         }
         @media (max-width: 600px) {
             .manifest-guide {
                 padding: 1rem;
+            }
+            .carousel-btn {
+                font-size: 1.5rem;
+                width: 36px;
+                height: 36px;
+            }
+            .carousel-slide img {
+                max-height: 300px;
             }
         }
     </style>
@@ -136,10 +214,21 @@
                 <li><span class="step-icon">4</span> Подтвердите установку, нажав <strong>«Установить»</strong>.</li>
                 <li><span class="step-icon">5</span> Готово! Иконка появится на рабочем столе.</li>
             </ol>
-            <div class="screenshot-placeholder" data-i18n="manifest_android_screenshot_alt">[Скриншот: меню Chrome с пунктом "Установить приложение"]</div>
+            <!-- Карусель Android -->
+            <div class="carousel-container" id="carouselAndroid">
+                <div class="carousel-track" id="trackAndroid">
+                    <div class="carousel-slide"><img src="/assets/manifest/Android/1.png" alt="Android шаг 1"></div>
+                    <div class="carousel-slide"><img src="/assets/manifest/Android/2.png" alt="Android шаг 2"></div>
+                    <div class="carousel-slide"><img src="/assets/manifest/Android/3.png" alt="Android шаг 3"></div>
+                    <div class="carousel-slide"><img src="/assets/manifest/Android/4.png" alt="Android шаг 4"></div>
+                </div>
+                <button class="carousel-btn prev" data-target="Android">‹</button>
+                <button class="carousel-btn next" data-target="Android">›</button>
+                <div class="carousel-dots" id="dotsAndroid"></div>
+            </div>
 
             <!-- iOS -->
-            <h2><span class="badge">iOS</span> <span data-i18n="manifest_ios_title">Safari (iPhone / iPad)</span></h2>
+            <h2 style="margin-top: 2.5rem;"><span class="badge">iOS</span> <span data-i18n="manifest_ios_title">Safari (iPhone / iPad)</span></h2>
             <ol data-i18n="manifest_ios_steps">
                 <li><span class="step-icon">1</span> Откройте сайт <span class="highlight">db.deanon.rf.gd</span> в Safari.</li>
                 <li><span class="step-icon">2</span> Нажмите на иконку <strong>«Поделиться»</strong> (квадрат со стрелкой вверх) внизу экрана.</li>
@@ -147,7 +236,18 @@
                 <li><span class="step-icon">4</span> Нажмите <strong>«Добавить»</strong> в правом верхнем углу.</li>
                 <li><span class="step-icon">5</span> Готово! Иконка появится на главном экране.</li>
             </ol>
-            <div class="screenshot-placeholder" data-i18n="manifest_ios_screenshot_alt">[Скриншот: меню Safari с пунктом "На экран “Домой”"]</div>
+            <!-- Карусель iOS -->
+            <div class="carousel-container" id="carouselIOS">
+                <div class="carousel-track" id="trackIOS">
+                    <div class="carousel-slide"><img src="/assets/manifest/iOS/1.png" alt="iOS шаг 1"></div>
+                    <div class="carousel-slide"><img src="/assets/manifest/iOS/2.png" alt="iOS шаг 2"></div>
+                    <div class="carousel-slide"><img src="/assets/manifest/iOS/3.png" alt="iOS шаг 3"></div>
+                    <div class="carousel-slide"><img src="/assets/manifest/iOS/4.png" alt="iOS шаг 4"></div>
+                </div>
+                <button class="carousel-btn prev" data-target="IOS">‹</button>
+                <button class="carousel-btn next" data-target="IOS">›</button>
+                <div class="carousel-dots" id="dotsIOS"></div>
+            </div>
 
             <!-- Заключение -->
             <div style="margin-top: 2rem; padding: 1.5rem; background: var(--glass-bg); border-radius: 12px; border-left: 4px solid var(--accent, #00ff41);">
@@ -181,5 +281,70 @@
     <footer class="footer glass"><p data-i18n="footer_text">© 2026 Деанон. Все права защищены.</p></footer>
 
     <script src="/script.js"></script>
+    <script>
+        // Инициализация каруселей
+        function initCarousel(containerId, trackId, dotsId) {
+            const container = document.getElementById(containerId);
+            const track = document.getElementById(trackId);
+            const dotsContainer = document.getElementById(dotsId);
+            if (!container || !track || !dotsContainer) return;
+
+            const slides = track.querySelectorAll('.carousel-slide');
+            const total = slides.length;
+            let current = 0;
+            let interval;
+
+            // Создаём точки
+            for (let i = 0; i < total; i++) {
+                const dot = document.createElement('button');
+                dot.className = 'carousel-dot' + (i === 0 ? ' active' : '');
+                dot.dataset.index = i;
+                dot.addEventListener('click', () => goTo(i));
+                dotsContainer.appendChild(dot);
+            }
+
+            function goTo(index) {
+                if (index < 0) index = total - 1;
+                if (index >= total) index = 0;
+                current = index;
+                track.style.transform = `translateX(-${current * 100}%)`;
+                // Обновляем точки
+                document.querySelectorAll(`#${dotsId} .carousel-dot`).forEach((dot, i) => {
+                    dot.classList.toggle('active', i === current);
+                });
+            }
+
+            function next() { goTo(current + 1); }
+            function prev() { goTo(current - 1); }
+
+            // Кнопки
+            container.querySelector('.next').addEventListener('click', next);
+            container.querySelector('.prev').addEventListener('click', prev);
+
+            // Автопереключение
+            function startAutoplay() {
+                interval = setInterval(next, 3000);
+            }
+            function stopAutoplay() {
+                clearInterval(interval);
+            }
+            container.addEventListener('mouseenter', stopAutoplay);
+            container.addEventListener('mouseleave', startAutoplay);
+            // Для мобильных — пауза при касании
+            container.addEventListener('touchstart', stopAutoplay);
+            container.addEventListener('touchend', startAutoplay);
+
+            startAutoplay();
+
+            // Публичные методы (для возможного использования)
+            container.__carousel = { goTo, next, prev, startAutoplay, stopAutoplay };
+        }
+
+        // Запускаем карусели после загрузки DOM
+        document.addEventListener('DOMContentLoaded', () => {
+            initCarousel('carouselAndroid', 'trackAndroid', 'dotsAndroid');
+            initCarousel('carouselIOS', 'trackIOS', 'dotsIOS');
+        });
+    </script>
 </body>
 </html>
