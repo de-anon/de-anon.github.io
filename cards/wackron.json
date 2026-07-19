@@ -1,0 +1,11 @@
+{
+    "name": "Беляев Александр",
+    "phone": "+79001119581",
+    "address": "г. Тверь",
+    "type": "telegram",
+    "photo": "/assets/faces/wackron.jpg",
+    "socials": {
+        "telegram": "t.me/+79001119581",
+        "vk": "sbelyaev2917"
+    }
+}
