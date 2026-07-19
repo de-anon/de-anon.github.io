@@ -199,6 +199,16 @@ function filterCards() {
     });
 }
 
+// Синхронизация языка между вкладками
+window.addEventListener('storage', (e) => {
+    if (e.key === 'lang') {
+        const newLang = e.newValue;
+        if (newLang) {
+            loadLanguage(newLang);
+        }
+    }
+});
+
 // Init
 loadLanguage(currentLang);
 loadCards();
