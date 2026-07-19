@@ -31,13 +31,13 @@ document.querySelectorAll('button, a, input').forEach(el => {
 
 // i18n System
 let currentLang = localStorage.getItem('lang') || 'ru';
-let translations = {}; // ← глобальное хранилище переводов
+let translations = {};
 
 async function loadLanguage(lang) {
     try {
         const res = await fetch(`/lang/${lang}.json`);
         const data = await res.json();
-        translations = data; // ← сохраняем все переводы
+        translations = data;
         document.querySelectorAll('[data-i18n]').forEach(el => {
             const key = el.getAttribute('data-i18n');
             if (data[key]) el.textContent = data[key];
@@ -161,69 +161,65 @@ if (bviUiSize) {
 }
 
 // ============================================
-// ЗАСЕЧКИ — СУПЕР-НАДЁЖНЫЙ ФИКС (создаёт чекбокс, если его нет)
+// ЗАСЕЧКИ — ФИНАЛЬНЫЙ РАШ (через класс)
 // ============================================
 (function initSerif() {
     let serifCheckbox = document.getElementById('bviSerif');
 
-    // Если чекбокса нет — создаём его и добавляем в BVI-панель
+    // Если чекбокса нет — создаём
     if (!serifCheckbox) {
         const bviPanel = document.getElementById('bviPanel');
         if (bviPanel) {
             const group = document.createElement('div');
             group.className = 'bvi-group';
-            
             const label = document.createElement('label');
             label.setAttribute('for', 'bviSerif');
             label.setAttribute('data-i18n', 'bvi_serif');
             label.textContent = 'Засечки';
-            
             const switchWrap = document.createElement('span');
             switchWrap.className = 'switch';
-            
             const input = document.createElement('input');
             input.type = 'checkbox';
             input.id = 'bviSerif';
-            
             const slider = document.createElement('span');
             slider.className = 'slider';
-            
             switchWrap.appendChild(input);
             switchWrap.appendChild(slider);
             group.appendChild(label);
             group.appendChild(switchWrap);
             bviPanel.appendChild(group);
-            
             serifCheckbox = input;
-            console.log('[BVI] Чекбокс засечек создан динамически');
+            console.log('[BVI] Чекбокс создан');
         } else {
-            console.warn('[BVI] BVI-панель не найдена, засечки не работают');
+            console.warn('[BVI] Нет панели');
             return;
         }
     }
 
-    // Функция применения шрифта
-    function applySerif(isChecked) {
-        const fontFamily = isChecked ? 'Georgia, serif' : "'Courier New', monospace";
-        // Принудительно применяем ко всем элементам через !important
-        document.documentElement.style.setProperty('--font-family', fontFamily, 'important');
-        document.body.style.fontFamily = fontFamily; // для старых браузеров
-        localStorage.setItem('bviSerif', isChecked ? 'serif' : 'sans');
-        console.log('[BVI] Применён шрифт:', fontFamily);
+    // Функция переключения класса
+    function setSerif(on) {
+        if (on) {
+            document.documentElement.classList.add('serif');
+            localStorage.setItem('bviSerif', 'serif');
+        } else {
+            document.documentElement.classList.remove('serif');
+            localStorage.setItem('bviSerif', 'sans');
+        }
+        console.log('[BVI] Засечки:', on ? 'включены' : 'выключены');
     }
 
     // Восстанавливаем состояние
     const savedSerif = localStorage.getItem('bviSerif');
     const isSerif = savedSerif === 'serif';
     serifCheckbox.checked = isSerif;
-    applySerif(isSerif);
+    setSerif(isSerif);
 
-    // Обработчики (и change, и click для надёжности)
+    // Обработчики
     serifCheckbox.addEventListener('change', function(e) {
-        applySerif(e.target.checked);
+        setSerif(e.target.checked);
     });
     serifCheckbox.addEventListener('click', function(e) {
-        applySerif(e.target.checked);
+        setSerif(e.target.checked);
     });
 
     // Синхронизация между вкладками
@@ -231,11 +227,9 @@ if (bviUiSize) {
         if (e.key === 'bviSerif') {
             const newState = e.newValue === 'serif';
             serifCheckbox.checked = newState;
-            applySerif(newState);
+            setSerif(newState);
         }
     });
-
-    console.log('[BVI] Засечки инициализированы, состояние:', savedSerif || 'sans');
 })();
 
 // Layout Toggle
