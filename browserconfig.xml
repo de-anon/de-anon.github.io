@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<browserconfig>
+    <msapplication>
+        <tile>
+            <!-- Квадратные плитки для разных размеров -->
+            <square70x70logo src="/assets/icons/icon-70x70.png"/>
+            <square150x150logo src="/assets/icons/icon-150x150.png"/>
+            <square310x310logo src="/assets/icons/icon-310x310.png"/>
+            
+            <!-- Широкая плитка (для Windows 8 и выше) -->
+            <wide310x150logo src="/assets/icons/icon-310x150.png"/>
+            
+            <!-- Цвет фона плитки (соответствует тёмной теме) -->
+            <TileColor>#050505</TileColor>
+            
+            <!-- Замена цвету текста на плитке (не поддерживается везде) -->
+            <TileTextColor>#00ff41</TileTextColor>
+            
+            <!-- Дополнительное изображение для всей плитки (альтернатива логотипам) -->
+            <!-- <TileImage src="/assets/icons/tile-background.png"/> -->
+        </tile>
+        
+        <!-- Настройка уведомлений (для push-уведомлений) -->
+        <notification>
+            <polling-uri>/notifications/</polling-uri>
+            <polling-interval>86400</polling-interval>
+            <frequency>2</frequency>
+            <cycle>1</cycle>
+        </notification>
+        
+        <!-- Настройка бейджиков (число уведомлений на иконке) -->
+        <badge>
+            <polling-uri>/badge/</polling-uri>
+            <polling-interval2>3600</polling-interval2>
+        </badge>
+        
+        <!-- Дополнительные настройки для браузера Edge -->
+        <customizations>
+            <customization>
+                <name>AllowPin</name>
+                <value>true</value>
+            </customization>
+            <customization>
+                <name>DisableSwitchToDesktop</name>
+                <value>false</value>
+            </customization>
+        </customizations>
+        
+        <!-- Настройки для "прыгающей" иконки в Windows 10 (Taskbar) -->
+        <taskbar>
+            <enableJumpList>true</enableJumpList>
+            <jumpListItems>
+                <item>
+                    <name>Главная</name>
+                    <url>/</url>
+                    <icon>/assets/icons/icon-32x32.ico</icon>
+                </item>
+                <item>
+                    <name>О проекте</name>
+                    <url>/about/</url>
+                    <icon>/assets/icons/icon-32x32.ico</icon>
+                </item>
+                <item>
+                    <name>FAQ</name>
+                    <url>/faq/</url>
+                    <icon>/assets/icons/icon-32x32.ico</icon>
+                </item>
+            </jumpListItems>
+        </taskbar>
+    </msapplication>
+</browserconfig>

@@ -1,3 +1,9 @@
+// Добавляем browserconfig для Windows
+const meta = document.createElement('meta');
+meta.name = 'msapplication-config';
+meta.content = '/browserconfig.xml';
+document.head.appendChild(meta);
+
 // Custom Cursor
 const cursorDot = document.querySelector('.cursor-dot');
 const cursorRing = document.querySelector('.cursor-ring');
@@ -146,24 +152,6 @@ if (bviSerif) {
     });
 }
 
-// Восстановление состояния засечек
-const savedSerif = localStorage.getItem('bviSerif');
-if (savedSerif === 'serif') {
-    const serifCheckbox = document.getElementById('bviSerif');
-    if (serifCheckbox) {
-        serifCheckbox.checked = true;
-        document.documentElement.style.setProperty('--font-family', 'Georgia, serif');
-    }
-}
-// При изменении сохраняем
-if (bviSerif) {
-    bviSerif.addEventListener('change', e => {
-        const isChecked = e.target.checked;
-        localStorage.setItem('bviSerif', isChecked ? 'serif' : 'sans');
-        document.documentElement.style.setProperty('--font-family', isChecked ? 'Georgia, serif' : "'Courier New', monospace");
-    });
-}
-
 // Layout Toggle
 const layoutToggle = document.getElementById('layoutToggle');
 if (layoutToggle) {
@@ -285,3 +273,10 @@ window.addEventListener('storage', (e) => {
 // Init
 loadLanguage(currentLang);
 loadCards();
+
+// Регистрация Service Worker
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js')
+        .then(reg => console.log('[SW] Зарегистрирован:', reg))
+        .catch(err => console.error('[SW] Ошибка регистрации:', err));
+}
