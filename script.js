@@ -192,13 +192,27 @@ async function loadCards() {
 function openModal(card) {
     const modal = document.getElementById('modalContent');
     if (!modal) return;
+
+    // Формируем строку соцсетей
+    let socialsHtml = '';
+    if (card.socials) {
+        if (typeof card.socials === 'object') {
+            for (const [platform, username] of Object.entries(card.socials)) {
+                socialsHtml += `<p><strong>${platform.charAt(0).toUpperCase() + platform.slice(1)}:</strong> ${username}</p>`;
+            }
+        } else {
+            // fallback, если socials - строка
+            socialsHtml = `<p><strong>Socials:</strong> ${card.socials}</p>`;
+        }
+    }
+
     modal.innerHTML = `
         <button class="modal-close" id="modalClose">&times;</button>
         <img src="${card.photo}" style="width:100%; max-height:400px; object-fit:cover; border-radius:12px; margin-bottom:20px;">
         <h2>${card.name}</h2>
-        <p>Phone: ${card.phone}</p>
-        <p>Address: ${card.address}</p>
-        <p>Socials: ${card.socials}</p>
+        <p><strong>Phone:</strong> ${card.phone}</p>
+        <p><strong>Address:</strong> ${card.address}</p>
+        ${socialsHtml}
     `;
     document.getElementById('modalOverlay').classList.add('active');
     document.getElementById('modalClose').addEventListener('click', closeModal);
