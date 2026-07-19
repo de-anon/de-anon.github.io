@@ -30,5 +30,12 @@
     "page_title_about": "À propos — De-Anon",
     "page_title_faq": "FAQ — De-Anon",
     "page_title_tos": "Conditions — De-Anon",
-    "page_title_privacy": "Confidentialité — De-Anon"
+    "page_title_privacy": "Confidentialité — De-Anon",
+    "error_404_title": "404 — Page non trouvée",
+    "error_404_heading": "404",
+    "error_404_text": "Désolé, la page demandée n'existe pas ou a été supprimée.",
+    "error_500_title": "500 — Erreur interne du serveur",
+    "error_500_heading": "500",
+    "error_500_text": "Une erreur s'est produite sur le serveur. Veuillez réessayer plus tard.",
+    "error_go_home": "Retourner à l'accueil"
 }
