@@ -28,11 +28,18 @@
 body.force-desktop { min-width: 800px; }
 body.force-mobile { max-width: 600px; margin: 0 auto; }
 
+/* ===== ГЛОБАЛЬНОЕ ПРИНУДИТЕЛЬНОЕ ПРИМЕНЕНИЕ ШРИФТА ===== */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
     cursor: none;
+    font-family: var(--font-family) !important;
+}
+
+/* Исключение для SVG, чтобы иконки не ломались */
+svg, svg * {
+    font-family: inherit !important;
 }
 
 html {
@@ -43,22 +50,13 @@ html {
 body {
     background: var(--bg-color);
     color: var(--text-color);
-    font-family: var(--font-family);
     font-size: 1rem;
     overflow-x: hidden;
     min-height: 100vh;
     line-height: 1.6;
 }
 
-/* Принудительно применяем шрифт ко всем элементам, кроме SVG и иконок */
-* {
-    font-family: var(--font-family);
-}
-svg, .btn-icon svg, .dropdown-item svg {
-    font-family: inherit;
-}
-
-/* Scanline Pseudo-element */
+/* Сканирующая линия */
 body::before {
     content: '';
     position: fixed;
@@ -99,7 +97,7 @@ body::before {
     transition: transform 0.2s, width 0.2s, height 0.2s;
 }
 
-/* Custom Scrollbar */
+/* Scrollbar */
 ::-webkit-scrollbar { width: 10px; }
 ::-webkit-scrollbar-track { background: var(--bg-color); }
 ::-webkit-scrollbar-thumb { background: var(--text-color); border-radius: 5px; }
@@ -322,7 +320,6 @@ body::before {
     border-radius: 20px;
     cursor: none;
     transition: all 0.3s;
-    font-family: var(--font-family);
     font-size: calc(0.8125rem * var(--ui-scale));
 }
 .filter-btn.active,
@@ -514,7 +511,6 @@ input:checked + .slider:before {
 /* ============================================
    АДАПТИВ
    ============================================ */
-
 @media (max-width: 1024px) {
     .cards-grid {
         grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
@@ -767,5 +763,5 @@ img {
     -webkit-user-drag: none !important;
     user-drag: none !important;
     -webkit-touch-callout: none !important;
-    pointer-events: none; /* если мешает – убери */
+    pointer-events: none;
 }
