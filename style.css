@@ -36,6 +36,7 @@ body.force-mobile { max-width: 600px; margin: 0 auto; }
 }
 
 html {
+    font-size: var(--font-size-base);
     scroll-behavior: smooth;
 }
 
@@ -43,10 +44,18 @@ body {
     background: var(--bg-color);
     color: var(--text-color);
     font-family: var(--font-family);
-    font-size: var(--font-size-base);
+    font-size: 1rem;
     overflow-x: hidden;
     min-height: 100vh;
     line-height: 1.6;
+}
+
+/* Принудительно применяем шрифт ко всем элементам, кроме SVG и иконок */
+* {
+    font-family: var(--font-family);
+}
+svg, .btn-icon svg, .dropdown-item svg {
+    font-family: inherit;
 }
 
 /* Scanline Pseudo-element */
@@ -72,7 +81,7 @@ body::before {
 
 /* Custom Cursor */
 .cursor-dot {
-    width: 8px; height: 8px;
+    width: 0.5rem; height: 0.5rem;
     background: var(--text-color);
     border-radius: 50%;
     position: fixed;
@@ -81,7 +90,7 @@ body::before {
     transition: transform 0.1s;
 }
 .cursor-ring {
-    width: 30px; height: 30px;
+    width: 1.875rem; height: 1.875rem;
     border: 2px solid var(--text-color);
     border-radius: 50%;
     position: fixed;
@@ -106,16 +115,15 @@ body::before {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: calc(12px * var(--ui-scale)) calc(20px * var(--ui-scale));
+    padding: calc(0.75rem * var(--ui-scale)) calc(1.25rem * var(--ui-scale));
     min-height: var(--nav-height);
     gap: 10px;
 }
 
-/* Логотип */
 .logo {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 0.625rem;
     text-decoration: none;
     color: var(--text-color);
     flex-shrink: 0;
@@ -123,15 +131,15 @@ body::before {
 .logo::before {
     content: '';
     display: block;
-    width: 42px;
-    height: 42px;
+    width: 2.625rem;
+    height: 2.625rem;
     background: url('/assets/logo.webp') no-repeat center / contain;
     filter: var(--logo-filter, none);
     flex-shrink: 0;
     transition: filter 0.3s;
 }
 .logo-text {
-    font-size: calc(20px * var(--ui-scale));
+    font-size: calc(1.25rem * var(--ui-scale));
     font-weight: bold;
     text-transform: uppercase;
     letter-spacing: 2px;
@@ -146,17 +154,16 @@ body::before {
     51%, 100% { opacity: 0; }
 }
 
-/* Навигация */
 .nav {
     display: flex;
     align-items: center;
-    gap: 15px;
+    gap: 0.9375rem;
     transition: all 0.3s ease;
 }
 .nav a {
     color: var(--text-color);
     text-decoration: none;
-    font-size: calc(14px * var(--ui-scale));
+    font-size: calc(0.875rem * var(--ui-scale));
     transition: opacity 0.3s;
     white-space: nowrap;
 }
@@ -164,7 +171,6 @@ body::before {
     opacity: 0.7;
 }
 
-/* Бургер-кнопка (показывается только на мобилках) */
 .burger-btn {
     display: none;
     flex-direction: column;
@@ -172,8 +178,8 @@ body::before {
     background: none;
     border: none;
     color: var(--text-color);
-    width: 36px;
-    height: 36px;
+    width: 2.25rem;
+    height: 2.25rem;
     padding: 6px;
     cursor: pointer;
     z-index: 101;
@@ -204,10 +210,9 @@ body::before {
     transform: rotate(-45deg) translate(5px, -5px);
 }
 
-/* Контролы (иконки справа) */
 .controls {
     display: flex;
-    gap: 10px;
+    gap: 0.625rem;
     align-items: center;
     flex-shrink: 0;
 }
@@ -216,8 +221,8 @@ body::before {
     background: transparent;
     border: 1px solid var(--glass-border);
     color: var(--text-color);
-    width: 38px;
-    height: 38px;
+    width: 2.375rem;
+    height: 2.375rem;
     border-radius: 8px;
     display: flex;
     align-items: center;
@@ -231,12 +236,11 @@ body::before {
     color: var(--bg-color);
 }
 
-/* Dropdown */
 .dropdown { position: relative; }
 .dropdown-menu {
     position: absolute;
     right: 0;
-    top: 45px;
+    top: 2.8125rem;
     min-width: 160px;
     border-radius: 8px;
     padding: 10px;
@@ -263,7 +267,7 @@ body::before {
     display: flex;
     align-items: center;
     gap: 10px;
-    font-size: 14px;
+    font-size: 0.875rem;
     transition: background 0.2s;
 }
 .dropdown-item:hover {
@@ -274,15 +278,14 @@ body::before {
    MAIN CONTENT
    ============================================ */
 .main-content {
-    padding: calc(15px * var(--ui-scale));
+    padding: calc(0.9375rem * var(--ui-scale));
     max-width: 1400px;
     margin: 0 auto;
     width: 100%;
 }
 
-/* Controls Panel (поиск + фильтры) */
 .controls-panel {
-    padding: calc(18px * var(--ui-scale));
+    padding: calc(1.125rem * var(--ui-scale));
     border-radius: 12px;
     margin-bottom: 20px;
     display: flex;
@@ -294,7 +297,7 @@ body::before {
     border: none;
     border-bottom: 2px solid var(--glass-border);
     color: var(--text-color);
-    font-size: calc(16px * var(--ui-scale));
+    font-size: calc(1rem * var(--ui-scale));
     padding: 10px 5px;
     outline: none;
     width: 100%;
@@ -320,7 +323,7 @@ body::before {
     cursor: none;
     transition: all 0.3s;
     font-family: var(--font-family);
-    font-size: calc(13px * var(--ui-scale));
+    font-size: calc(0.8125rem * var(--ui-scale));
 }
 .filter-btn.active,
 .filter-btn:hover {
@@ -329,7 +332,6 @@ body::before {
     border-color: var(--text-color);
 }
 
-/* Cards Grid */
 .cards-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -365,16 +367,15 @@ body::before {
     gap: 4px;
 }
 .card-name {
-    font-size: 18px;
+    font-size: 1.125rem;
     font-weight: bold;
     margin-bottom: 2px;
 }
 .card-info {
-    font-size: 13px;
+    font-size: 0.8125rem;
     opacity: 0.8;
 }
 
-/* Modal */
 .modal-overlay {
     position: fixed;
     top: 0; left: 0;
@@ -404,7 +405,7 @@ body::before {
     position: absolute;
     top: 15px;
     right: 15px;
-    font-size: 28px;
+    font-size: 1.75rem;
     background: none;
     border: none;
     color: var(--text-color);
@@ -420,7 +421,6 @@ body::before {
     margin-bottom: 15px;
 }
 
-/* BVI Panel */
 .bvi-panel {
     position: fixed;
     top: 0;
@@ -443,7 +443,7 @@ body::before {
     position: absolute;
     top: 15px;
     right: 15px;
-    font-size: 30px;
+    font-size: 1.875rem;
     color: var(--text-color);
     background: none;
     border: none;
@@ -455,10 +455,9 @@ body::before {
     gap: 8px;
 }
 .bvi-group label {
-    font-size: 16px;
+    font-size: 1rem;
 }
 
-/* Toggle Switch */
 .switch {
     position: relative;
     display: inline-block;
@@ -497,30 +496,25 @@ input:checked + .slider:before {
     background: var(--bg-color);
 }
 
-/* Footer */
 .footer {
     text-align: center;
     padding: 20px;
     margin-top: 30px;
-    font-size: 14px;
+    font-size: 0.875rem;
     opacity: 0.7;
 }
 .footer p {
     margin: 0;
 }
 
-/* ============================================
-   ТЕМНАЯ ТЕМА — ИНВЕРСИЯ ЛОГО
-   ============================================ */
 [data-theme="dark"] .logo::before {
     --logo-filter: invert(1) brightness(1.2);
 }
 
 /* ============================================
-   АДАПТИВ — ПИЗДАТЫЙ И РОВНЫЙ
+   АДАПТИВ
    ============================================ */
 
-/* Планшеты и маленькие ноуты (768–1024px) */
 @media (max-width: 1024px) {
     .cards-grid {
         grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
@@ -530,33 +524,29 @@ input:checked + .slider:before {
         padding: 12px 16px;
     }
     .logo-text {
-        font-size: calc(18px * var(--ui-scale));
+        font-size: calc(1.125rem * var(--ui-scale));
     }
     .logo::before {
-        width: 36px;
-        height: 36px;
+        width: 2.25rem;
+        height: 2.25rem;
     }
     .nav a {
-        font-size: calc(13px * var(--ui-scale));
+        font-size: calc(0.8125rem * var(--ui-scale));
     }
     .controls {
         gap: 8px;
     }
     .btn-icon {
-        width: 34px;
-        height: 34px;
+        width: 2.125rem;
+        height: 2.125rem;
     }
 }
 
-/* Мобилки (до 768px) — ТУТ БУРГЕР! */
 @media (max-width: 768px) {
-    /* Бургер появляется */
     .burger-btn {
         display: flex;
         order: 1;
     }
-
-    /* Навигация скрыта по умолчанию */
     .nav {
         position: fixed;
         top: 0;
@@ -581,7 +571,7 @@ input:checked + .slider:before {
         transform: translateX(0);
     }
     .nav a {
-        font-size: calc(22px * var(--ui-scale));
+        font-size: calc(1.375rem * var(--ui-scale));
         font-weight: bold;
         letter-spacing: 1px;
         padding: 8px 20px;
@@ -592,8 +582,6 @@ input:checked + .slider:before {
         border-bottom-color: var(--text-color);
         opacity: 1;
     }
-
-    /* Корректировка хедера — контролы справа от бургера */
     .header {
         padding: 10px 14px;
         gap: 8px;
@@ -609,15 +597,13 @@ input:checked + .slider:before {
         min-width: 0;
     }
     .logo-text {
-        font-size: calc(16px * var(--ui-scale));
+        font-size: calc(1rem * var(--ui-scale));
         letter-spacing: 1px;
     }
     .logo::before {
-        width: 32px;
-        height: 32px;
+        width: 2rem;
+        height: 2rem;
     }
-
-    /* Карточки в 1 колонку */
     .cards-grid {
         grid-template-columns: 1fr;
         gap: 16px;
@@ -625,14 +611,12 @@ input:checked + .slider:before {
     .card-img {
         height: 220px;
     }
-
-    /* Контрол-панель */
     .controls-panel {
         padding: 14px;
         gap: 10px;
     }
     .search-input {
-        font-size: 15px;
+        font-size: 0.9375rem;
         padding: 8px 4px;
     }
     .filters {
@@ -640,10 +624,8 @@ input:checked + .slider:before {
     }
     .filter-btn {
         padding: 5px 12px;
-        font-size: 12px;
+        font-size: 0.75rem;
     }
-
-    /* Модалка */
     .modal-content {
         padding: 20px 16px;
         max-width: 100%;
@@ -652,94 +634,82 @@ input:checked + .slider:before {
     .modal-content img {
         max-height: 250px;
     }
-
-    /* BVI панель */
     .bvi-panel {
         width: 100%;
         max-width: 320px;
         padding: 25px 20px;
     }
-
-    /* Дропдауны на мобилках чуть сдвигаем */
     .dropdown-menu {
         right: -10px;
         min-width: 140px;
     }
-
-    /* Курсор на мобилках скрываем (он мешает) */
     .cursor-dot,
     .cursor-ring {
         display: none !important;
     }
-    /* Возвращаем стандартный курсор на мобилках */
     * {
         cursor: auto !important;
     }
     button, a, input {
         cursor: pointer !important;
     }
-
-    /* Сканирующая линия на мобилках тоньше */
     body::before {
         background-size: 100% 2px;
         opacity: 0.2;
     }
-
-    /* Main контент меньше отступы */
     .main-content {
         padding: 10px;
     }
 }
 
-/* Очень маленькие экраны (до 480px) */
 @media (max-width: 480px) {
     .header {
         padding: 8px 10px;
         min-height: 56px;
     }
     .logo::before {
-        width: 28px;
-        height: 28px;
+        width: 1.75rem;
+        height: 1.75rem;
     }
     .logo-text {
-        font-size: 14px;
+        font-size: 0.875rem;
         letter-spacing: 0.5px;
     }
     .btn-icon {
-        width: 30px;
-        height: 30px;
+        width: 1.875rem;
+        height: 1.875rem;
         border-radius: 6px;
     }
     .btn-icon svg {
-        width: 16px;
-        height: 16px;
+        width: 1rem;
+        height: 1rem;
     }
     .controls {
         gap: 4px;
     }
     .burger-btn {
-        width: 30px;
-        height: 30px;
+        width: 1.875rem;
+        height: 1.875rem;
         padding: 5px;
     }
     .card-img {
         height: 180px;
     }
     .card-name {
-        font-size: 16px;
+        font-size: 1rem;
     }
     .card-info {
-        font-size: 12px;
+        font-size: 0.75rem;
     }
     .controls-panel {
         padding: 12px;
     }
     .search-input {
-        font-size: 14px;
+        font-size: 0.875rem;
         padding: 6px 4px;
     }
     .filter-btn {
-        font-size: 11px;
+        font-size: 0.6875rem;
         padding: 4px 10px;
     }
     .filters {
@@ -753,11 +723,10 @@ input:checked + .slider:before {
         padding: 20px 16px;
     }
     .bvi-group label {
-        font-size: 14px;
+        font-size: 0.875rem;
     }
 }
 
-/* Альбомная ориентация на мобилках */
 @media (max-width: 900px) and (orientation: landscape) {
     .nav.open {
         flex-direction: row;
@@ -768,7 +737,7 @@ input:checked + .slider:before {
         align-content: center;
     }
     .nav a {
-        font-size: 18px;
+        font-size: 1.125rem;
         padding: 6px 14px;
     }
     .cards-grid {
@@ -776,12 +745,9 @@ input:checked + .slider:before {
     }
 }
 
-/* ============================================
-   УЛУЧШЕНИЯ ДЛЯ БОЛЬШИХ ЭКРАНОВ
-   ============================================ */
 @media (min-width: 1400px) {
     .main-content {
-        padding: calc(25px * var(--ui-scale));
+        padding: calc(1.5625rem * var(--ui-scale));
     }
     .cards-grid {
         grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -792,7 +758,7 @@ input:checked + .slider:before {
     }
 }
 
-/* Запрет выделения и перетаскивания для всех изображений */
+/* Запрет выделения для изображений */
 img {
     user-select: none !important;
     -webkit-user-select: none !important;
@@ -801,5 +767,5 @@ img {
     -webkit-user-drag: none !important;
     user-drag: none !important;
     -webkit-touch-callout: none !important;
-    pointer-events: none; /* если не хочешь, чтобы картинки реагировали на клик */
+    pointer-events: none; /* если мешает – убери */
 }
