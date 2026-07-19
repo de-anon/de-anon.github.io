@@ -124,7 +124,7 @@ document.body.addEventListener('click', () => {
     document.querySelectorAll('.dropdown-menu').forEach(m => m.classList.remove('active'));
 });
 
-// BVI Panel
+// BVI Panel — размер шрифта и UI
 const bviPanel = document.getElementById('bviPanel');
 const bviBtn = document.getElementById('bviBtn');
 const bviClose = document.getElementById('bviClose');
@@ -141,7 +141,6 @@ if (bviFontSize) {
         document.documentElement.style.setProperty('--font-size-base', e.target.value + 'px');
         localStorage.setItem('bviFontSize', e.target.value);
     });
-    // Восстановление размера шрифта
     const savedFontSize = localStorage.getItem('bviFontSize');
     if (savedFontSize) {
         bviFontSize.value = savedFontSize;
@@ -161,29 +160,83 @@ if (bviUiSize) {
     }
 }
 
-// ===== ЗАСЕЧКИ — С СОХРАНЕНИЕМ СОСТОЯНИЯ =====
-const bviSerif = document.getElementById('bviSerif');
-if (bviSerif) {
-    // Восстанавливаем состояние из localStorage
-    const savedSerif = localStorage.getItem('bviSerif');
-    if (savedSerif === 'serif') {
-        bviSerif.checked = true;
-        document.documentElement.style.setProperty('--font-family', 'Georgia, serif');
-    } else {
-        bviSerif.checked = false;
-        document.documentElement.style.setProperty('--font-family', "'Courier New', monospace");
+// ============================================
+// ЗАСЕЧКИ — СУПЕР-НАДЁЖНЫЙ ФИКС (создаёт чекбокс, если его нет)
+// ============================================
+(function initSerif() {
+    let serifCheckbox = document.getElementById('bviSerif');
+
+    // Если чекбокса нет — создаём его и добавляем в BVI-панель
+    if (!serifCheckbox) {
+        const bviPanel = document.getElementById('bviPanel');
+        if (bviPanel) {
+            const group = document.createElement('div');
+            group.className = 'bvi-group';
+            
+            const label = document.createElement('label');
+            label.setAttribute('for', 'bviSerif');
+            label.setAttribute('data-i18n', 'bvi_serif');
+            label.textContent = 'Засечки';
+            
+            const switchWrap = document.createElement('span');
+            switchWrap.className = 'switch';
+            
+            const input = document.createElement('input');
+            input.type = 'checkbox';
+            input.id = 'bviSerif';
+            
+            const slider = document.createElement('span');
+            slider.className = 'slider';
+            
+            switchWrap.appendChild(input);
+            switchWrap.appendChild(slider);
+            group.appendChild(label);
+            group.appendChild(switchWrap);
+            bviPanel.appendChild(group);
+            
+            serifCheckbox = input;
+            console.log('[BVI] Чекбокс засечек создан динамически');
+        } else {
+            console.warn('[BVI] BVI-панель не найдена, засечки не работают');
+            return;
+        }
     }
 
-    // Обработчик изменения
-    bviSerif.addEventListener('change', function(e) {
-        const isChecked = e.target.checked;
-        document.documentElement.style.setProperty(
-            '--font-family',
-            isChecked ? 'Georgia, serif' : "'Courier New', monospace"
-        );
+    // Функция применения шрифта
+    function applySerif(isChecked) {
+        const fontFamily = isChecked ? 'Georgia, serif' : "'Courier New', monospace";
+        // Принудительно применяем ко всем элементам через !important
+        document.documentElement.style.setProperty('--font-family', fontFamily, 'important');
+        document.body.style.fontFamily = fontFamily; // для старых браузеров
         localStorage.setItem('bviSerif', isChecked ? 'serif' : 'sans');
+        console.log('[BVI] Применён шрифт:', fontFamily);
+    }
+
+    // Восстанавливаем состояние
+    const savedSerif = localStorage.getItem('bviSerif');
+    const isSerif = savedSerif === 'serif';
+    serifCheckbox.checked = isSerif;
+    applySerif(isSerif);
+
+    // Обработчики (и change, и click для надёжности)
+    serifCheckbox.addEventListener('change', function(e) {
+        applySerif(e.target.checked);
     });
-}
+    serifCheckbox.addEventListener('click', function(e) {
+        applySerif(e.target.checked);
+    });
+
+    // Синхронизация между вкладками
+    window.addEventListener('storage', function(e) {
+        if (e.key === 'bviSerif') {
+            const newState = e.newValue === 'serif';
+            serifCheckbox.checked = newState;
+            applySerif(newState);
+        }
+    });
+
+    console.log('[BVI] Засечки инициализированы, состояние:', savedSerif || 'sans');
+})();
 
 // Layout Toggle
 const layoutToggle = document.getElementById('layoutToggle');
@@ -197,7 +250,7 @@ if (layoutToggle) {
 // Cards Autoload System (only on main page)
 async function loadCards() {
     const grid = document.getElementById('cardsGrid');
-    if (!grid) return; // exit if not on main page
+    if (!grid) return;
 
     try {
         const res = await fetch('/cards/manifest.json');
@@ -224,7 +277,6 @@ async function loadCards() {
         }
     } catch (e) {
         console.error('Failed to load cards', e);
-		console.error('Full error:', e);
         grid.innerHTML = '<p style="color:var(--text-color)">No cards found. Create cards/manifest.json</p>';
     }
 }
@@ -233,7 +285,6 @@ function openModal(card) {
     const modal = document.getElementById('modalContent');
     if (!modal) return;
 
-    // Формируем строку соцсетей
     let socialsHtml = '';
     if (card.socials) {
         if (typeof card.socials === 'object') {
@@ -241,7 +292,6 @@ function openModal(card) {
                 socialsHtml += `<p><strong>${platform.charAt(0).toUpperCase() + platform.slice(1)}:</strong> ${username}</p>`;
             }
         } else {
-            // fallback, если socials - строка
             socialsHtml = `<p><strong>Socials:</strong> ${card.socials}</p>`;
         }
     }
@@ -307,24 +357,20 @@ window.addEventListener('storage', (e) => {
 function addManifestLink() {
     const nav = document.querySelector('.nav');
     if (!nav) return;
-    // Проверяем, есть ли уже такая ссылка
     if (nav.querySelector('a[href="/manifest/"]')) return;
 
     const link = document.createElement('a');
     link.href = '/manifest/';
     link.setAttribute('data-i18n', 'manifest_nav');
-    // Устанавливаем текст из текущих переводов (если есть)
     link.textContent = translations['manifest_nav'] || 'Установка';
     nav.appendChild(link);
 }
 
 // ===== ИНИЦИАЛИЗАЦИЯ =====
-// Загружаем язык, затем добавляем ссылку в меню
 loadLanguage(currentLang).then(() => {
     addManifestLink();
 });
 
-// Загружаем карточки (только на главной)
 loadCards();
 
 // Регистрация Service Worker
@@ -338,7 +384,6 @@ if ('serviceWorker' in navigator) {
 // БУРГЕР-МЕНЮ — ДОБАВЛЯЕТСЯ АВТОМАТИЧЕСКИ НА ВСЕ СТРАНИЦЫ
 // ============================================
 (function initBurgerMenu() {
-    // Ждём загрузки DOM
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', addBurger);
     } else {
@@ -350,26 +395,19 @@ if ('serviceWorker' in navigator) {
         const nav = document.querySelector('.nav');
         const controls = document.querySelector('.controls');
         if (!header || !nav || !controls) return;
-
-        // Проверяем, не добавлена ли уже кнопка
         if (header.querySelector('.burger-btn')) return;
 
-        // Создаём бургер-кнопку
         const burger = document.createElement('button');
         burger.className = 'burger-btn';
         burger.setAttribute('aria-label', 'Меню');
         burger.innerHTML = '<span></span><span></span><span></span>';
-        
-        // Вставляем перед controls
         header.insertBefore(burger, controls);
 
-        // Обработчик клика
         burger.addEventListener('click', () => {
             burger.classList.toggle('active');
             nav.classList.toggle('open');
         });
 
-        // Закрываем меню при клике на ссылку
         nav.querySelectorAll('a').forEach(link => {
             link.addEventListener('click', () => {
                 burger.classList.remove('active');
@@ -377,7 +415,6 @@ if ('serviceWorker' in navigator) {
             });
         });
 
-        // Закрываем при клике вне хедера
         document.addEventListener('click', (e) => {
             if (!e.target.closest('.header')) {
                 burger.classList.remove('active');
@@ -385,7 +422,6 @@ if ('serviceWorker' in navigator) {
             }
         });
 
-        // Закрываем при изменении ориентации или ресайзе (на случай, если меню открыто при повороте)
         window.addEventListener('resize', () => {
             if (window.innerWidth > 768) {
                 burger.classList.remove('active');
