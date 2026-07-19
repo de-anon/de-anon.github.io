@@ -74,59 +74,43 @@ body::before {
     display: flex; justify-content: space-between; align-items: center;
     padding: calc(15px * var(--ui-scale)) calc(30px * var(--ui-scale));
 }
-/* ===== НОВЫЙ ЛОГОТИП ===== */
+/* Логотип как ссылка */
 .logo {
     display: flex;
     align-items: center;
     gap: 10px;
     text-decoration: none;
     color: var(--text-color);
-    font-weight: bold;
-    font-size: calc(24px * var(--ui-scale));
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    position: relative;
 }
 
-/* Картинка */
+/* Псевдоэлемент с картинкой */
 .logo::before {
     content: '';
-    display: inline-block;
-    width: calc(40px * var(--ui-scale));
-    height: calc(40px * var(--ui-scale));
-    background-image: url('/assets/logo.webp');
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-    border-radius: 5px;
+    display: block;
+    width: 48px;          /* размер картинки */
+    height: 48px;
+    background: url('/assets/logo.webp') no-repeat center / contain;
+    filter: var(--logo-filter, none); /* для инверсии в тёмной теме */
     flex-shrink: 0;
-    transition: filter 0.3s;
 }
 
-/* Текст */
-.logo::after {
-    content: attr(data-text);
-    display: inline-block;
-    line-height: 1;
+/* Текст логотипа */
+.logo-text {
+    font-size: calc(24px * var(--ui-scale));
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 2px;
 }
 
-/* Мигающий курсор (как в оригинале) */
-.logo::after {
-    /* добавляем символ подчёркивания, который мигает */
-    content: attr(data-text) '_';
+/* Мигающее подчёркивание (как было) */
+.logo-text::after {
+    content: '_';
+    animation: blink 1s infinite;
 }
 
-/* Анимация мигания только для подчёркивания */
-.logo::after {
-    /* используем анимацию, но чтобы мигал только последний символ, нужно сделать хитрость: */
-    /* на самом деле мигает весь текст, но мы можем сделать отдельный псевдоэлемент для подчёркивания, но их только два. */
-    /* Поэтому предлагаю убрать мигание, либо сделать через дополнительный элемент. */
-    /* Реализуем без мигания, если нужно - добавлю позже. */
-}
-
-/* Адаптация под тёмную тему: инвертируем логотип */
-[data-theme="dark"] .logo::before {
-    filter: invert(1) brightness(1.2) contrast(1.2);
+@keyframes blink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0; }
 }
 @keyframes blink { 0%, 50% { opacity: 1; } 51%, 100% { opacity: 0; } }
 
