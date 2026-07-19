@@ -139,18 +139,49 @@ const bviFontSize = document.getElementById('bviFontSize');
 if (bviFontSize) {
     bviFontSize.addEventListener('input', e => {
         document.documentElement.style.setProperty('--font-size-base', e.target.value + 'px');
+        localStorage.setItem('bviFontSize', e.target.value);
     });
+    // Восстановление размера шрифта
+    const savedFontSize = localStorage.getItem('bviFontSize');
+    if (savedFontSize) {
+        bviFontSize.value = savedFontSize;
+        document.documentElement.style.setProperty('--font-size-base', savedFontSize + 'px');
+    }
 }
 const bviUiSize = document.getElementById('bviUiSize');
 if (bviUiSize) {
     bviUiSize.addEventListener('input', e => {
         document.documentElement.style.setProperty('--ui-scale', e.target.value / 100);
+        localStorage.setItem('bviUiSize', e.target.value);
     });
+    const savedUiSize = localStorage.getItem('bviUiSize');
+    if (savedUiSize) {
+        bviUiSize.value = savedUiSize;
+        document.documentElement.style.setProperty('--ui-scale', savedUiSize / 100);
+    }
 }
+
+// ===== ЗАСЕЧКИ — С СОХРАНЕНИЕМ СОСТОЯНИЯ =====
 const bviSerif = document.getElementById('bviSerif');
 if (bviSerif) {
-    bviSerif.addEventListener('change', e => {
-        document.documentElement.style.setProperty('--font-family', e.target.checked ? 'Georgia, serif' : "'Courier New', monospace");
+    // Восстанавливаем состояние из localStorage
+    const savedSerif = localStorage.getItem('bviSerif');
+    if (savedSerif === 'serif') {
+        bviSerif.checked = true;
+        document.documentElement.style.setProperty('--font-family', 'Georgia, serif');
+    } else {
+        bviSerif.checked = false;
+        document.documentElement.style.setProperty('--font-family', "'Courier New', monospace");
+    }
+
+    // Обработчик изменения
+    bviSerif.addEventListener('change', function(e) {
+        const isChecked = e.target.checked;
+        document.documentElement.style.setProperty(
+            '--font-family',
+            isChecked ? 'Georgia, serif' : "'Courier New', monospace"
+        );
+        localStorage.setItem('bviSerif', isChecked ? 'serif' : 'sans');
     });
 }
 
