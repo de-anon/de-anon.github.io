@@ -1,6 +1,6 @@
 // sw.js — Service Worker для De-Anon
 // Версия кеша — увеличивай при обновлении статики
-const CACHE_NAME = 'deanon-cache-v1';
+const CACHE_NAME = 'deanon-cache-v2'; // увеличиваем версию, чтобы обновить кэш
 const STATIC_ASSETS = [
   '/',
   '/style.css',
@@ -13,6 +13,16 @@ const STATIC_ASSETS = [
   '/500.html'
   // Добавь сюда все основные HTML-страницы, если хочешь их кешировать
   // но лучше оставить только статику
+  // ===== ДОБАВЛЯЕМ СКРИНШОТЫ ДЛЯ PWA =====
+  '/assets/manifest/Android/1.png',
+  '/assets/manifest/Android/2.png',
+  '/assets/manifest/Android/3.png',
+  '/assets/manifest/Android/4.png',
+  '/assets/manifest/iOS/1.png',
+  '/assets/manifest/iOS/2.png',
+  '/assets/manifest/iOS/3.png',
+  '/assets/manifest/iOS/4.png'
+  // =======================================
 ];
 
 // Установка — кешируем статику
