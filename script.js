@@ -161,7 +161,7 @@ if (bviUiSize) {
 }
 
 // ============================================
-// ЗАСЕЧКИ — СУПЕР-НАДЁЖНЫЙ ФИКС (через body)
+// ЗАСЕЧКИ — финальный вариант (только класс)
 // ============================================
 (function initSerif() {
     let serifCheckbox = document.getElementById('bviSerif');
@@ -205,10 +205,6 @@ if (bviUiSize) {
             document.body.classList.remove('serif');
             localStorage.setItem('bviSerif', 'sans');
         }
-        // Дополнительное принудительное применение через JS (для надёжности)
-        const fontFamily = on ? "'Georgia', serif" : "'Courier New', monospace";
-        document.body.style.fontFamily = fontFamily;
-        document.body.style.setProperty('font-family', fontFamily, 'important');
         console.log('[BVI] Засечки:', on ? 'включены' : 'выключены');
     }
 

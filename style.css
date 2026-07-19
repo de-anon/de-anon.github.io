@@ -36,18 +36,12 @@ body {
     padding: 0;
     box-sizing: border-box;
     cursor: none;
-    font-family: inherit; /* наследуем от body */
 }
 
-/* ===== ЗАСЕЧКИ — через класс на body ===== */
+/* ===== ЗАСЕЧКИ — только через класс .serif ===== */
 body.serif,
 body.serif * {
     font-family: 'Georgia', serif !important;
-}
-/* ===== БЕЗ ЗАСЕЧЕК (явно) ===== */
-body:not(.serif),
-body:not(.serif) * {
-    font-family: 'Courier New', monospace !important;
 }
 
 /* Исключение для SVG и иконок */
