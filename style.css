@@ -75,7 +75,7 @@ body::before {
     padding: calc(15px * var(--ui-scale)) calc(30px * var(--ui-scale));
 }
 .logo-container { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text-color); }
-.logo-img { width: 40px; height: 40px; border-radius: 5px; }
+.logo-img { width: 60px; height: 60px; border-radius: 5px; }
 .logo-text { font-size: calc(24px * var(--ui-scale)); font-weight: bold; text-transform: uppercase; letter-spacing: 2px; }
 .logo-text::after { content: '_'; animation: blink 1s infinite; }
 @keyframes blink { 0%, 50% { opacity: 1; } 51%, 100% { opacity: 0; } }
