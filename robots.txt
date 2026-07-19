@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /cards/
+Disallow: /lang/
+Disallow: /assets/favicon/
+Sitemap: https://de-anon.github.io/sitemap.xml
