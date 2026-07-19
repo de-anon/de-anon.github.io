@@ -1,0 +1,62 @@
+name: Отправка новых карточек в Telegram
+
+on:
+  push:
+    paths:
+      - 'cards/*.json'
+      - 'cards/manifest.json'
+
+jobs:
+  send_to_telegram:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 2
+
+      - name: Отправка карточек в Telegram
+        env:
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          # Проверяем, что токен и chat_id установлены
+          if [ -z "$TELEGRAM_TOKEN" ] || [ -z "$TELEGRAM_CHAT_ID" ]; then
+            echo "❌ Токен или chat_id не найдены"
+            exit 1
+          fi
+
+          # Находим изменённые JSON-файлы в папке cards
+          CHANGED_FILES=$(git diff --name-only HEAD~1 HEAD -- cards/*.json | grep -v "manifest.json" || true)
+
+          # Если изменений нет — выходим
+          if [ -z "$CHANGED_FILES" ]; then
+            echo "📭 Новых карточек не найдено"
+            exit 0
+          fi
+
+          # Обрабатываем каждый изменённый файл
+          for FILE in $CHANGED_FILES; do
+            echo "📄 Обрабатываем: $FILE"
+            
+            # Извлекаем данные из JSON
+            NAME=$(jq -r '.name' "$FILE" 2>/dev/null || echo "Неизвестно")
+            PHONE=$(jq -r '.phone' "$FILE" 2>/dev/null || echo "Не указан")
+            ADDRESS=$(jq -r '.address' "$FILE" 2>/dev/null || echo "Не указан")
+            SOCIALS=$(jq -r '.socials' "$FILE" 2>/dev/null || echo "Нет данных")
+            
+            # Формируем сообщение (экранируем спецсимволы)
+            MESSAGE="🆕 Новая карточка в Деанон!%0A%0A👤 Имя: $NAME%0A📱 Телефон: $PHONE%0A📍 Адрес: $ADDRESS%0A🔗 Соцсети: $SOCIALS%0A%0A🔗 Сайт: https://db.deanon.rf.gd/"
+            
+            # Отправляем в Telegram
+            RESPONSE=$(curl -s -X POST "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendMessage" \
+              -d "chat_id=$TELEGRAM_CHAT_ID" \
+              -d "text=$MESSAGE" \
+              -d "parse_mode=HTML")
+            
+            # Проверяем ответ
+            if echo "$RESPONSE" | grep -q '"ok":true'; then
+              echo "✅ Отправлено: $NAME"
+            else
+              echo "❌ Ошибка отправки: $RESPONSE"
+            fi
+          done
