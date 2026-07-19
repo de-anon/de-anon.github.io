@@ -302,3 +302,64 @@ if ('serviceWorker' in navigator) {
         .then(reg => console.log('[SW] Зарегистрирован:', reg))
         .catch(err => console.error('[SW] Ошибка регистрации:', err));
 }
+
+// ============================================
+// БУРГЕР-МЕНЮ — ДОБАВЛЯЕТСЯ АВТОМАТИЧЕСКИ НА ВСЕ СТРАНИЦЫ
+// ============================================
+(function initBurgerMenu() {
+    // Ждём загрузки DOM
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', addBurger);
+    } else {
+        addBurger();
+    }
+
+    function addBurger() {
+        const header = document.querySelector('.header');
+        const nav = document.querySelector('.nav');
+        const controls = document.querySelector('.controls');
+        if (!header || !nav || !controls) return;
+
+        // Проверяем, не добавлена ли уже кнопка
+        if (header.querySelector('.burger-btn')) return;
+
+        // Создаём бургер-кнопку
+        const burger = document.createElement('button');
+        burger.className = 'burger-btn';
+        burger.setAttribute('aria-label', 'Меню');
+        burger.innerHTML = '<span></span><span></span><span></span>';
+        
+        // Вставляем перед controls
+        header.insertBefore(burger, controls);
+
+        // Обработчик клика
+        burger.addEventListener('click', () => {
+            burger.classList.toggle('active');
+            nav.classList.toggle('open');
+        });
+
+        // Закрываем меню при клике на ссылку
+        nav.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                burger.classList.remove('active');
+                nav.classList.remove('open');
+            });
+        });
+
+        // Закрываем при клике вне хедера
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.header')) {
+                burger.classList.remove('active');
+                nav.classList.remove('open');
+            }
+        });
+
+        // Закрываем при изменении ориентации или ресайзе (на случай, если меню открыто при повороте)
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 768) {
+                burger.classList.remove('active');
+                nav.classList.remove('open');
+            }
+        });
+    }
+})();
