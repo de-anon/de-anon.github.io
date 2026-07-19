@@ -27,16 +27,30 @@
 body.force-desktop { min-width: 800px; }
 body.force-mobile { max-width: 600px; margin: 0 auto; }
 
-/* === ГЛОБАЛЬНЫЙ ШРИФТ ПО УМОЛЧАНИЮ (без засечек) === */
+/* ===== БАЗОВЫЙ ШРИФТ (без засечек) ===== */
+body {
+    font-family: 'Courier New', monospace;
+}
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
     cursor: none;
+    font-family: inherit; /* наследуем от body */
+}
+
+/* ===== ЗАСЕЧКИ — через класс на body ===== */
+body.serif,
+body.serif * {
+    font-family: 'Georgia', serif !important;
+}
+/* ===== БЕЗ ЗАСЕЧЕК (явно) ===== */
+body:not(.serif),
+body:not(.serif) * {
     font-family: 'Courier New', monospace !important;
 }
 
-/* === ИСКЛЮЧЕНИЕ ДЛЯ SVG (иконки) === */
+/* Исключение для SVG и иконок */
 svg, svg * {
     font-family: inherit !important;
 }
@@ -760,14 +774,4 @@ img {
     user-drag: none !important;
     -webkit-touch-callout: none !important;
     pointer-events: none;
-}
-
-/* ============================================
-   ЗАСЕЧКИ — КЛАСС НА HTML
-   ============================================ */
-html.serif * {
-    font-family: 'Georgia', serif !important;
-}
-html:not(.serif) * {
-    font-family: 'Courier New', monospace !important;
 }
