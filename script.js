@@ -424,7 +424,7 @@ if ('serviceWorker' in navigator) {
     }
 })();
 
-// ===== ИКОНКА TELEGRAM В ФУТЕРЕ (ПРАВИЛЬНАЯ) =====
+// ===== ИКОНКА TELEGRAM (ТОЧНО ПО ТВОЕМУ SVG) =====
 (function addTelegramIcon() {
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', insert);
@@ -436,7 +436,6 @@ if ('serviceWorker' in navigator) {
         const footer = document.querySelector('footer.footer');
         if (!footer || footer.querySelector('.telegram-link')) return;
 
-        // Настройка футера
         footer.style.display = 'flex';
         footer.style.justifyContent = 'space-between';
         footer.style.alignItems = 'center';
@@ -445,7 +444,6 @@ if ('serviceWorker' in navigator) {
         const p = footer.querySelector('p');
         if (p) p.style.margin = '0';
 
-        // Ссылка
         const link = document.createElement('a');
         link.href = 'https://t.me/deanonproject';
         link.target = '_blank';
@@ -453,46 +451,43 @@ if ('serviceWorker' in navigator) {
         link.className = 'telegram-link';
         link.setAttribute('aria-label', 'Telegram');
 
-        // SVG
+        // Твой SVG (размер 30x30, скругление 15)
         const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-        svg.setAttribute('viewBox', '0 0 24 24');
-        svg.setAttribute('width', '28');
-        svg.setAttribute('height', '28');
+        svg.setAttribute('viewBox', '0 0 30 30');
+        svg.setAttribute('width', '30');
+        svg.setAttribute('height', '30');
+        svg.style.display = 'block';
 
-        // Круг (зелёный, белая обводка)
-        const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-        circle.setAttribute('cx', '12');
-        circle.setAttribute('cy', '12');
-        circle.setAttribute('r', '11.5');
-        circle.setAttribute('fill', '#00ff41');
-        circle.setAttribute('stroke', '#ffffff');
-        circle.setAttribute('stroke-width', '1');
-        circle.style.transition = 'fill 0.3s ease';
+        // Прямоугольник (фон) – цвет будет меняться через CSS
+        const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+        rect.setAttribute('width', '30');
+        rect.setAttribute('height', '30');
+        rect.setAttribute('rx', '15');
+        rect.setAttribute('fill', 'currentColor'); // берём цвет из CSS
+        rect.style.transition = 'fill 0.3s ease';
 
-        // Самолётик (белый)
+        // Путь (самолётик) – белый
         const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-        path.setAttribute('d', 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.74 6.64l-1.72 8.08c-.12.56-.46.7-.93.44l-2.57-1.9-1.24 1.2c-.14.13-.25.25-.52.25l.18-2.64 4.82-4.35c.21-.18-.04-.28-.32-.1l-5.96 3.77-2.57-.8c-.56-.18-.57-.56.12-.83l10.04-3.87c.47-.17.9.1.74.73z');
+        path.setAttribute('d', 'M7.35253 15.4067L11.0326 16.6223L19.7703 11.4264C19.8972 11.3513 20.0269 11.5187 19.9178 11.6165L13.3029 17.5389L13.0571 20.8545C13.0531 20.91 13.0666 20.9654 13.0957 21.0133C13.1248 21.0613 13.1682 21.0995 13.2201 21.1229C13.2721 21.1463 13.3301 21.1538 13.3865 21.1443C13.4429 21.1349 13.4951 21.109 13.536 21.0701L15.5726 19.1219L19.2961 21.8633C19.6972 22.159 20.2783 21.9506 20.3863 21.4725L22.9789 10.0223C23.1269 9.36924 22.4687 8.81785 21.8269 9.05686L7.33424 14.4551C6.87938 14.6247 6.89195 15.2544 7.35253 15.4067Z');
         path.setAttribute('fill', '#ffffff');
 
-        svg.appendChild(circle);
+        svg.appendChild(rect);
         svg.appendChild(path);
         link.appendChild(svg);
         footer.appendChild(link);
 
-        // Стили (только для hover)
+        // Стили: обычное состояние – зелёный, при наведении – голубой
         const style = document.createElement('style');
         style.textContent = `
             .telegram-link {
                 text-decoration: none;
                 flex-shrink: 0;
                 display: inline-block;
-                transition: transform 0.2s ease;
+                color: #00ff41;
+                transition: color 0.3s ease;
             }
             .telegram-link:hover {
-                transform: scale(1.05);
-            }
-            .telegram-link:hover svg circle {
-                fill: #0088cc !important;
+                color: #0088cc;
             }
             @media (max-width: 480px) {
                 .telegram-link svg {
