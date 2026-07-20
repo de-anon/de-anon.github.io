@@ -424,7 +424,7 @@ if ('serviceWorker' in navigator) {
     }
 })();
 
-// ===== ДОБАВЛЕНИЕ ИКОНКИ TELEGRAM В ФУТЕР =====
+// ===== ИКОНКА TELEGRAM В ФУТЕРЕ =====
 (function addTelegramIcon() {
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', insert);
@@ -434,60 +434,55 @@ if ('serviceWorker' in navigator) {
 
     function insert() {
         const footer = document.querySelector('footer.footer');
-        if (!footer) return;
-        if (footer.querySelector('.telegram-link')) return;
+        if (!footer || footer.querySelector('.telegram-link')) return;
 
-        // Настраиваем футер на flex
         footer.style.display = 'flex';
         footer.style.justifyContent = 'space-between';
         footer.style.alignItems = 'center';
         footer.style.flexWrap = 'wrap';
         footer.style.gap = '10px';
-
         const p = footer.querySelector('p');
         if (p) p.style.margin = '0';
 
-        // Создаём ссылку
         const link = document.createElement('a');
         link.href = 'https://t.me/deanonproject';
         link.target = '_blank';
         link.rel = 'noopener noreferrer';
         link.className = 'telegram-link';
-        link.setAttribute('aria-label', 'Telegram канал');
+        link.setAttribute('aria-label', 'Telegram');
 
-        // SVG иконка
         const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
         svg.setAttribute('viewBox', '0 0 24 24');
         svg.setAttribute('width', '28');
         svg.setAttribute('height', '28');
-        svg.style.display = 'block';
 
-        // Круг — зелёный (цвет сайта)
-        const bgCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-        bgCircle.setAttribute('cx', '12');
-        bgCircle.setAttribute('cy', '12');
-        bgCircle.setAttribute('r', '12');
-        bgCircle.setAttribute('fill', '#00ff41');
-        bgCircle.style.transition = 'fill 0.3s ease';
+        // Круг с заливкой и белой обводкой
+        const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        circle.setAttribute('cx', '12');
+        circle.setAttribute('cy', '12');
+        circle.setAttribute('r', '11.5');
+        circle.setAttribute('fill', '#00ff41');
+        circle.setAttribute('stroke', '#ffffff');
+        circle.setAttribute('stroke-width', '1');
+        circle.style.transition = 'fill 0.3s ease';
 
-        // Самолётик — всегда белый
+        // Белый самолётик
         const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
         path.setAttribute('d', 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.74 6.64l-1.72 8.08c-.12.56-.46.7-.93.44l-2.57-1.9-1.24 1.2c-.14.13-.25.25-.52.25l.18-2.64 4.82-4.35c.21-.18-.04-.28-.32-.1l-5.96 3.77-2.57-.8c-.56-.18-.57-.56.12-.83l10.04-3.87c.47-.17.9.1.74.73z');
         path.setAttribute('fill', '#ffffff');
 
-        svg.appendChild(bgCircle);
+        svg.appendChild(circle);
         svg.appendChild(path);
         link.appendChild(svg);
         footer.appendChild(link);
 
-        // Стили: при наведении круг становится голубым
         const style = document.createElement('style');
         style.textContent = `
             .telegram-link {
                 text-decoration: none;
                 flex-shrink: 0;
                 display: inline-block;
-                transition: transform 0.3s ease;
+                transition: transform 0.2s ease;
             }
             .telegram-link:hover {
                 transform: scale(1.05);
