@@ -424,7 +424,7 @@ if ('serviceWorker' in navigator) {
     }
 })();
 
-// ===== ИКОНКА TELEGRAM В ФУТЕРЕ =====
+// ===== ИКОНКА TELEGRAM В ФУТЕРЕ (ПРАВИЛЬНАЯ) =====
 (function addTelegramIcon() {
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', insert);
@@ -436,6 +436,7 @@ if ('serviceWorker' in navigator) {
         const footer = document.querySelector('footer.footer');
         if (!footer || footer.querySelector('.telegram-link')) return;
 
+        // Настройка футера
         footer.style.display = 'flex';
         footer.style.justifyContent = 'space-between';
         footer.style.alignItems = 'center';
@@ -444,6 +445,7 @@ if ('serviceWorker' in navigator) {
         const p = footer.querySelector('p');
         if (p) p.style.margin = '0';
 
+        // Ссылка
         const link = document.createElement('a');
         link.href = 'https://t.me/deanonproject';
         link.target = '_blank';
@@ -451,12 +453,13 @@ if ('serviceWorker' in navigator) {
         link.className = 'telegram-link';
         link.setAttribute('aria-label', 'Telegram');
 
+        // SVG
         const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
         svg.setAttribute('viewBox', '0 0 24 24');
         svg.setAttribute('width', '28');
         svg.setAttribute('height', '28');
 
-        // Круг с заливкой и белой обводкой
+        // Круг (зелёный, белая обводка)
         const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
         circle.setAttribute('cx', '12');
         circle.setAttribute('cy', '12');
@@ -466,7 +469,7 @@ if ('serviceWorker' in navigator) {
         circle.setAttribute('stroke-width', '1');
         circle.style.transition = 'fill 0.3s ease';
 
-        // Белый самолётик
+        // Самолётик (белый)
         const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
         path.setAttribute('d', 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.74 6.64l-1.72 8.08c-.12.56-.46.7-.93.44l-2.57-1.9-1.24 1.2c-.14.13-.25.25-.52.25l.18-2.64 4.82-4.35c.21-.18-.04-.28-.32-.1l-5.96 3.77-2.57-.8c-.56-.18-.57-.56.12-.83l10.04-3.87c.47-.17.9.1.74.73z');
         path.setAttribute('fill', '#ffffff');
@@ -476,6 +479,7 @@ if ('serviceWorker' in navigator) {
         link.appendChild(svg);
         footer.appendChild(link);
 
+        // Стили (только для hover)
         const style = document.createElement('style');
         style.textContent = `
             .telegram-link {
