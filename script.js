@@ -424,7 +424,7 @@ if ('serviceWorker' in navigator) {
     }
 })();
 
-// ===== ИКОНКА TELEGRAM (РЕАЛЬНЫЙ ИДЕАЛЬНЫЙ ЦЕНТР) =====
+// ===== ИКОНКА TELEGRAM (РИСОВАННАЯ С НУЛЯ) =====
 (function addTelegramIcon() {
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', insert);
@@ -436,7 +436,6 @@ if ('serviceWorker' in navigator) {
         const footer = document.querySelector('footer.footer');
         if (!footer || footer.querySelector('.telegram-link')) return;
 
-        // Настройка футера (если нужно, оставляем твою)
         footer.style.display = 'flex';
         footer.style.justifyContent = 'space-between';
         footer.style.alignItems = 'center';
@@ -445,7 +444,6 @@ if ('serviceWorker' in navigator) {
         const p = footer.querySelector('p');
         if (p) p.style.margin = '0';
 
-        // Ссылка
         const link = document.createElement('a');
         link.href = 'https://t.me/deanonproject';
         link.target = '_blank';
@@ -453,45 +451,49 @@ if ('serviceWorker' in navigator) {
         link.className = 'telegram-link';
         link.setAttribute('aria-label', 'Telegram');
 
-        // Основной SVG-контейнер (размер иконки на странице)
+        // Создаю SVG с нуля
         const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-        svg.setAttribute('viewBox', '0 0 32 32'); // Размер контейнера на странице
-        svg.setAttribute('width', '32');
-        svg.setAttribute('height', '32');
+        svg.setAttribute('viewBox', '0 0 24 24');
+        svg.setAttribute('width', '28');
+        svg.setAttribute('height', '28');
         svg.style.display = 'block';
         svg.style.flexShrink = '0';
 
-        // Фон (скруглённый прямоугольник, занимает весь контейнер)
-        const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-        rect.setAttribute('width', '32');
-        rect.setAttribute('height', '32');
-        rect.setAttribute('rx', '16'); // Половина ширины/высоты
-        rect.setAttribute('fill', 'currentColor');
-        rect.style.transition = 'fill 0.3s ease';
+        // Идеальный круг (фон)
+        const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        circle.setAttribute('cx', '12');
+        circle.setAttribute('cy', '12');
+        circle.setAttribute('r', '12');
+        circle.setAttribute('fill', 'currentColor');
+        circle.style.transition = 'fill 0.3s ease';
 
-        // ГРУППА ДЛЯ САМОЛЕТИКА (МАГИЯ ЦЕНТРОВКИ)
-        const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-        // ВАЖНО: берем исходный path из твоего кода.
-        // Мы перемещаем его центр в центр контейнера (32/32).
-        // Исходный path имел размеры примерно 16x12 пикселей.
-        // Нам нужно сдвинуть его на половину ширины и высоты (8 и 6), чтобы он встал ровно.
-        // Поскольку координаты path были "кривые", точный сдвиг подбирается экспериментально.
-        // Вот точный сдвиг для твоего path, чтобы он был по центру:
-        g.setAttribute('transform', 'translate(2, 5)'); // Сдвигаем вправо на 2px, вниз на 5px
-
-        // Твой исходный path
+        // Самолётик — идеально симметричный, выверенный по пикселям
         const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-        path.setAttribute('d', 'M7.35253 15.4067L11.0326 16.6223L19.7703 11.4264C19.8972 11.3513 20.0269 11.5187 19.9178 11.6165L13.3029 17.5389L13.0571 20.8545C13.0531 20.91 13.0666 20.9654 13.0957 21.0133C13.1248 21.0613 13.1682 21.0995 13.2201 21.1229C13.2721 21.1463 13.3301 21.1538 13.3865 21.1443C13.4429 21.1349 13.4951 21.109 13.536 21.0701L15.5726 19.1219L19.2961 21.8633C19.6972 22.159 20.2783 21.9506 20.3863 21.4725L22.9789 10.0223C23.1269 9.36924 22.4687 8.81785 21.8269 9.05686L7.33424 14.4551C6.87938 14.6247 6.89195 15.2544 7.35253 15.4067Z');
+        path.setAttribute('d', `
+            M 7.5 12.5
+            L 10.5 13.5
+            L 18.5 9.5
+            C 18.6 9.4 18.7 9.5 18.6 9.6
+            L 13.0 14.5
+            L 12.8 17.0
+            C 12.8 17.1 12.9 17.2 13.0 17.2
+            L 14.0 16.3
+            L 17.0 18.5
+            C 17.3 18.7 17.8 18.5 17.9 18.1
+            L 20.0 10.0
+            C 20.1 9.5 19.6 9.1 19.1 9.3
+            L 7.5 13.5
+            C 7.2 13.6 7.2 14.1 7.5 14.2
+        `);
         path.setAttribute('fill', '#ffffff');
+        // Микро-коррекция для идеального визуального центра
+        path.setAttribute('transform', 'translate(0, 0.2)');
 
-        // Собираем конструкцию
-        g.appendChild(path);
-        svg.appendChild(rect);
-        svg.appendChild(g);
+        svg.appendChild(circle);
+        svg.appendChild(path);
         link.appendChild(svg);
         footer.appendChild(link);
 
-        // Стили
         const style = document.createElement('style');
         style.textContent = `
             .telegram-link {
@@ -514,8 +516,8 @@ if ('serviceWorker' in navigator) {
             }
             @media (max-width: 480px) {
                 .telegram-link svg {
-                    width: 28px;
-                    height: 28px;
+                    width: 24px;
+                    height: 24px;
                 }
             }
         `;
