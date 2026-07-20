@@ -426,7 +426,6 @@ if ('serviceWorker' in navigator) {
 
 // ===== ДОБАВЛЕНИЕ ИКОНКИ TELEGRAM В ФУТЕР =====
 (function addTelegramIcon() {
-    // Ждём загрузки DOM
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', insert);
     } else {
@@ -436,24 +435,17 @@ if ('serviceWorker' in navigator) {
     function insert() {
         const footer = document.querySelector('footer.footer');
         if (!footer) return;
-
-        // Проверяем, не добавлена ли уже иконка
         if (footer.querySelector('.telegram-link')) return;
 
-        // Устанавливаем футеру flex для выравнивания
         footer.style.display = 'flex';
         footer.style.justifyContent = 'space-between';
         footer.style.alignItems = 'center';
         footer.style.flexWrap = 'wrap';
         footer.style.gap = '10px';
 
-        // Находим существующий параграф и добавляем ему отступ
         const p = footer.querySelector('p');
-        if (p) {
-            p.style.margin = '0';
-        }
+        if (p) p.style.margin = '0';
 
-        // Создаём ссылку
         const link = document.createElement('a');
         link.href = 'https://t.me/deanonproject';
         link.target = '_blank';
@@ -461,7 +453,6 @@ if ('serviceWorker' in navigator) {
         link.className = 'telegram-link';
         link.setAttribute('aria-label', 'Telegram канал');
 
-        // Создаём SVG иконку
         const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
         svg.setAttribute('viewBox', '0 0 24 24');
         svg.setAttribute('width', '28');
@@ -469,30 +460,25 @@ if ('serviceWorker' in navigator) {
         svg.style.display = 'block';
         svg.style.transition = 'all 0.3s ease';
 
-        // Путь для фона (круг) – в обычном состоянии прозрачный, при наведении синий
+        // Круглый фон
         const bgCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
         bgCircle.setAttribute('cx', '12');
         bgCircle.setAttribute('cy', '12');
         bgCircle.setAttribute('r', '12');
         bgCircle.setAttribute('fill', 'currentColor');
-        bgCircle.setAttribute('fill-opacity', '0.2');
         bgCircle.style.transition = 'all 0.3s ease';
 
-        // Путь для значка (белый самолётик) – в обычном состоянии цвет текста, при наведении белый
+        // Самолётик
         const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
         path.setAttribute('d', 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.74 6.64l-1.72 8.08c-.12.56-.46.7-.93.44l-2.57-1.9-1.24 1.2c-.14.13-.25.25-.52.25l.18-2.64 4.82-4.35c.21-.18-.04-.28-.32-.1l-5.96 3.77-2.57-.8c-.56-.18-.57-.56.12-.83l10.04-3.87c.47-.17.9.1.74.73z');
         path.setAttribute('fill', 'currentColor');
         path.style.transition = 'all 0.3s ease';
 
-        // Собираем SVG
         svg.appendChild(bgCircle);
         svg.appendChild(path);
         link.appendChild(svg);
-
-        // Добавляем ссылку в футер
         footer.appendChild(link);
 
-        // Добавляем CSS-стили для эффекта при наведении (через style)
         const style = document.createElement('style');
         style.textContent = `
             .telegram-link {
@@ -506,12 +492,10 @@ if ('serviceWorker' in navigator) {
             }
             .telegram-link:hover svg circle {
                 fill: #0088cc;
-                fill-opacity: 1;
             }
             .telegram-link:hover svg path {
                 fill: #ffffff;
             }
-            /* Адаптация для мобилок */
             @media (max-width: 480px) {
                 .telegram-link svg {
                     width: 24px;
@@ -520,8 +504,5 @@ if ('serviceWorker' in navigator) {
             }
         `;
         document.head.appendChild(style);
-
-        // Если тема тёмная, цвет текста уже будет #00ff41, и так нормально.
-        // Дополнительно можно обновить цвет при смене темы, но мы используем CSS-переменную.
     }
 })();
