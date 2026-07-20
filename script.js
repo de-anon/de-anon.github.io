@@ -424,7 +424,7 @@ if ('serviceWorker' in navigator) {
     }
 })();
 
-// ===== ИКОНКА TELEGRAM (БЕЗ ОБРЕЗКИ) =====
+// ===== ИКОНКА TELEGRAM (ИДЕАЛЬНЫЙ ЦЕНТР, БЕЗ ОБРЕЗКИ) =====
 (function addTelegramIcon() {
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', insert);
@@ -458,6 +458,7 @@ if ('serviceWorker' in navigator) {
         svg.style.display = 'block';
         svg.style.flexShrink = '0';
 
+        // Фон (скруглённый прямоугольник)
         const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
         rect.setAttribute('width', '30');
         rect.setAttribute('height', '30');
@@ -465,9 +466,11 @@ if ('serviceWorker' in navigator) {
         rect.setAttribute('fill', 'currentColor');
         rect.style.transition = 'fill 0.3s ease';
 
+        // Самолётик с микро-смещением для идеального центрирования
         const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
         path.setAttribute('d', 'M7.35253 15.4067L11.0326 16.6223L19.7703 11.4264C19.8972 11.3513 20.0269 11.5187 19.9178 11.6165L13.3029 17.5389L13.0571 20.8545C13.0531 20.91 13.0666 20.9654 13.0957 21.0133C13.1248 21.0613 13.1682 21.0995 13.2201 21.1229C13.2721 21.1463 13.3301 21.1538 13.3865 21.1443C13.4429 21.1349 13.4951 21.109 13.536 21.0701L15.5726 19.1219L19.2961 21.8633C19.6972 22.159 20.2783 21.9506 20.3863 21.4725L22.9789 10.0223C23.1269 9.36924 22.4687 8.81785 21.8269 9.05686L7.33424 14.4551C6.87938 14.6247 6.89195 15.2544 7.35253 15.4067Z');
         path.setAttribute('fill', '#ffffff');
+        path.setAttribute('transform', 'translate(0, 0.3)'); // микро-смещение для идеального центра
 
         svg.appendChild(rect);
         svg.appendChild(path);
