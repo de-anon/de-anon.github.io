@@ -510,209 +510,382 @@ if ('serviceWorker' in navigator) {
 })();
 
 // ===== ПАНЕЛЬ РЕПОСТА (ВЫДВИЖНАЯ СПРАВА) =====
-(function createSharePanel() {
-    if (document.querySelector('.share-panel')) return;
+(function initSharePanel() {
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', build);
+    } else {
+        build();
+    }
 
-    // ===== ИКОНКИ (ВЫ УЖЕ ОПРЕДЕЛИЛИ В icons) =====
-    // Если icons уже объявлен в глобальной области, используем его.
-    // Если нет — объявим временно (но у вас он есть, я его не дублирую).
+    function build() {
+        // Проверка, чтобы не дублировать
+        if (document.querySelector('.share-panel-wrapper')) return;
 
-    // ===== ДАННЫЕ ДЛЯ ШАРИНГА =====
-    const pageUrl = encodeURIComponent(window.location.href);
-    const pageTitle = encodeURIComponent(document.title || 'Посмотрите это!');
+        // -------- КОНФИГУРАЦИЯ СОЦСЕТЕЙ --------
+        const socials = [
+            {
+                name: 'Facebook',
+                url: (u) => `https://www.facebook.com/sharer.php?u=${u}`,
+                color: '#1877F2',
+                path: 'M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z'
+            },
+            {
+                name: 'Одноклассники',
+                url: (u) => `https://connect.ok.ru/offer?url=${u}`,
+                color: '#EE8208',
+                path: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 4.5a2.5 2.5 0 110 5 2.5 2.5 0 010-5zm3.25 7.53c.66.5 1.06 1.1 1.06 1.8 0 .9-.8 1.7-2.1 2.3l1.2 1.2c.3.3.3.8 0 1.1-.3.3-.8.3-1.1 0l-1.3-1.3-1.3 1.3c-.3.3-.8.3-1.1 0-.3-.3-.3-.8 0-1.1l1.2-1.2c-1.3-.6-2.1-1.4-2.1-2.3 0-.7.4-1.3 1.1-1.8.3-.2.7-.1.9.2.2.3.1.7-.2.9-.4.3-.7.6-.7 1.1 0 .7.9 1.4 2.5 1.4s2.5-.7 2.5-1.4c0-.5-.3-.8-.7-1.1-.3-.2-.4-.6-.2-.9.2-.3.6-.4.9-.2z'
+            },
+            {
+                name: 'Telegram',
+                url: (u, t) => `https://t.me/share/url?url=${u}&text=${t}`,
+                color: '#26A5E4',
+                path: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.74 6.64l-1.72 8.08c-.12.56-.46.7-.93.44l-2.57-1.9-1.24 1.2c-.14.13-.25.25-.52.25l.18-2.64 4.82-4.35c.21-.18-.04-.28-.32-.1l-5.96 3.77-2.57-.8c-.56-.18-.57-.56.12-.83l10.04-3.87c.47-.17.9.1.74.73z'
+            },
+            {
+                name: 'ВКонтакте',
+                url: (u) => `https://vk.com/share.php?url=${u}`,
+                color: '#4C75A3',
+                path: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.48 14.14c-.25.27-.65.38-1.06.38-.26 0-.52-.06-.78-.19-.58-.27-1.13-.72-1.59-1.14-.35.43-.73.87-1.19 1.19-.42.29-.93.44-1.45.44-.19 0-.38-.02-.57-.07-.15-.04-.3-.1-.44-.17-.57-.29-1.02-.8-1.34-1.4-.33-.63-.5-1.38-.5-2.16V12.27c.01-.58.14-1.14.39-1.64.29-.57.72-1.01 1.22-1.28.39-.22.81-.33 1.24-.33.31 0 .62.06.9.18.58.24 1.05.68 1.38 1.26.24.42.38.91.39 1.42v.12c-.01.35-.07.7-.16 1.03-.14.52-.41.99-.77 1.37.19.24.4.46.62.65.33.28.7.49 1.08.63.41.15.83.19 1.24.11.36-.07.68-.27.88-.56.11-.16.17-.35.17-.55 0-.23-.07-.45-.19-.63-.29-.43-.8-.73-1.31-.94-.58-.24-1.05-.54-1.36-.86-.38-.4-.56-.89-.55-1.38-.01-.46.16-.88.45-1.22.31-.36.73-.55 1.18-.56.27 0 .54.05.8.16.79.31 1.42.89 1.79 1.62.41.82.55 1.8.31 2.72-.15.58-.49 1.09-.94 1.47z'
+            },
+            {
+                name: 'Viber',
+                url: (u) => `viber://forward?text=${u}`,
+                color: '#7360F2',
+                path: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1.35 13.24c-.43.43-1.16.65-1.86.65-.99 0-1.93-.37-2.64-1.08-.71-.71-1.08-1.65-1.08-2.64 0-.7.22-1.43.65-1.86.23-.23.59-.23.82 0l.79.79c.23.23.23.59 0 .82-.13.13-.2.3-.2.49 0 .38.16.73.43.99.27.27.62.43.99.43.19 0 .36-.07.49-.2.23-.23.59-.23.82 0l.79.79c.23.23.23.59 0 .82z'
+            },
+            {
+                name: 'WhatsApp',
+                url: (u) => `https://wa.me/?text=${u}`,
+                color: '#25D366',
+                path: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1.04 14.76c-.62.3-1.28.45-1.95.45-1.67 0-3.24-.84-4.16-2.25-1.48-2.28-.92-5.33 1.24-6.88.43-.31.97-.44 1.47-.37.38.06.73.27.95.59l.2.31c.22.34.13.8-.2 1.04l-.28.21c-.24.18-.31.52-.17.78.44.78 1.24 1.56 2.02 1.99.25.14.57.09.76-.14l.21-.28c.24-.32.7-.41 1.04-.19l.31.2c.33.21.53.56.56.94.04.48-.14.96-.51 1.31z'
+            },
+            {
+                name: 'X',
+                url: (u) => `https://twitter.com/intent/tweet?url=${u}`,
+                color: '#000000',
+                path: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm2.64 14.08l-2.76-3.62-3.22 3.62h-1.1l3.86-4.34-4.08-5.34h1.1l2.92 3.84 3.34-3.84h1.1l-3.78 4.25 4.28 5.39h-1.1z'
+            },
+            {
+                name: 'LinkedIn',
+                url: (u) => `https://www.linkedin.com/sharing/share-offsite/?url=${u}`,
+                color: '#0A66C2',
+                path: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1.54 12.85h-1.92V9.77h1.92v5.08zm-.96-5.77c-.62 0-1.12-.51-1.12-1.13s.5-1.13 1.12-1.13c.62 0 1.12.51 1.12 1.13s-.5 1.13-1.12 1.13zm7.96 5.77h-1.92v-3.04c0-.74-.58-1.34-1.3-1.34-.73 0-1.3.6-1.3 1.34v3.04h-1.92V9.77h1.92v.91c.37-.53.97-.91 1.69-.91 1.38 0 2.5 1.16 2.5 2.58v3.22z'
+            },
+            {
+                name: 'Мой Мир',
+                url: (u) => `https://connect.mail.ru/share?url=${u}`,
+                color: '#005FF9',
+                path: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 4.5c1.38 0 2.5 1.12 2.5 2.5s-1.12 2.5-2.5 2.5S9.5 10.38 9.5 9 10.62 6.5 12 6.5zm3.25 10.53c-.87.66-2.04 1.09-3.25 1.09s-2.38-.43-3.25-1.09c-.16-.12-.22-.32-.14-.48.27-.47 1.04-.62 1.59-.62.07 0 .14.01.21.02.42.09.85.16 1.3.16.45 0 .88-.07 1.3-.16.07-.01.14-.02.21-.02.55 0 1.32.15 1.59.62.08.16.02.36-.14.48z'
+            },
+            {
+                name: 'Instagram',
+                url: null, // копирование ссылки
+                color: '#E4405F',
+                path: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 4.5c2.05 0 3.71 1.66 3.71 3.71 0 2.05-1.66 3.71-3.71 3.71S8.29 12.26 8.29 10.21 9.95 6.5 12 6.5zm0 10.71c-2.42 0-4.56-1.28-5.78-3.21.47-1.48 1.85-2.53 3.47-2.53.72 0 1.38.24 1.91.63.53-.39 1.19-.63 1.91-.63 1.62 0 3.01 1.05 3.47 2.53-1.22 1.93-3.36 3.21-5.78 3.21z'
+            },
+            {
+                name: 'Копировать ссылку',
+                url: null,
+                color: '#FFFFFF',
+                path: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 14.5h-2v-2h2v2zm0-4h-2V7h2v5.5z'
+            }
+        ];
 
-    const shareItems = [
-        { url: `https://www.facebook.com/sharer.php?u=${pageUrl}`, icon: 'fb', label: 'Facebook' },
-        { url: `https://connect.ok.ru/offer?url=${pageUrl}`, icon: 'ok', label: 'Одноклассники' },
-        { url: `https://t.me/share/url?url=${pageUrl}&text=${pageTitle}`, icon: 'tg', label: 'Telegram' },
-        { url: `https://vk.com/share.php?url=${pageUrl}`, icon: 'vk', label: 'ВКонтакте' },
-        { url: `viber://forward?text=${pageUrl}`, icon: 'viber', label: 'Viber' },
-        { url: `https://wa.me/?text=${pageUrl}`, icon: 'wa', label: 'WhatsApp' },
-        { url: `https://twitter.com/intent/tweet?url=${pageUrl}`, icon: 'x', label: 'X' },
-        { url: `https://www.linkedin.com/sharing/share-offsite/?url=${pageUrl}`, icon: 'linkedin', label: 'LinkedIn' },
-        { url: `https://connect.mail.ru/share?url=${pageUrl}`, icon: 'mailru', label: 'Мой Мир' },
-        { url: `https://www.instagram.com/`, icon: 'insta', label: 'Instagram (скопируйте ссылку)', copy: true },
-        { url: null, icon: 'copy', label: 'Копировать ссылку', copy: true }
-    ];
-
-    // ===== СОЗДАЁМ ПАНЕЛЬ =====
-    const panel = document.createElement('div');
-    panel.className = 'share-panel';
-    panel.style.cssText = `
-        position: fixed;
-        right: 16px;
-        top: 50%;
-        transform: translateY(-50%);
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-        z-index: 9999;
-        background: var(--glass-bg, rgba(10,10,10,0.7));
-        backdrop-filter: blur(16px);
-        -webkit-backdrop-filter: blur(16px);
-        padding: 10px 8px;
-        border-radius: 14px;
-        border: 1px solid var(--glass-border, rgba(0,255,65,0.2));
-        box-shadow: 0 8px 32px rgba(0,0,0,0.5);
-        transition: all 0.3s ease;
-    `;
-
-    // ===== ДОБАВЛЯЕМ КНОПКИ =====
-    shareItems.forEach(item => {
-        const btn = document.createElement('a');
-        btn.href = '#';
-        btn.className = 'share-btn';
-        btn.setAttribute('aria-label', item.label);
-        btn.title = item.label;
-
-        // Вставляем SVG иконку (если есть в глобальном icons)
-        if (window.icons && window.icons[item.icon]) {
-            btn.innerHTML = window.icons[item.icon];
-        } else {
-            // fallback: текст
-            btn.textContent = item.icon;
-        }
-
-        // Стили для кнопки
-        btn.style.cssText = `
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 38px;
-            height: 38px;
-            border-radius: 10px;
-            transition: all 0.2s ease;
-            text-decoration: none;
-            color: var(--text-color, #00ff41);
-            background: transparent;
-            border: none;
-            cursor: pointer;
-            outline: none;
-            padding: 0;
-            margin: 0;
+        // -------- СОЗДАНИЕ КНОПКИ-ТРИГГЕРА --------
+        const toggleBtn = document.createElement('button');
+        toggleBtn.className = 'share-toggle-btn';
+        toggleBtn.setAttribute('aria-label', 'Поделиться');
+        toggleBtn.innerHTML = `
+            <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor">
+                <circle cx="12" cy="5" r="2.5" />
+                <circle cx="12" cy="19" r="2.5" />
+                <circle cx="19" cy="12" r="2.5" />
+                <line x1="14.5" y1="6.5" x2="19.5" y2="10.5" stroke="currentColor" stroke-width="1.5" />
+                <line x1="14.5" y1="17.5" x2="19.5" y2="13.5" stroke="currentColor" stroke-width="1.5" />
+                <line x1="9.5" y1="6.5" x2="4.5" y2="10.5" stroke="currentColor" stroke-width="1.5" />
+                <line x1="9.5" y1="17.5" x2="4.5" y2="13.5" stroke="currentColor" stroke-width="1.5" />
+            </svg>
         `;
-        // SVG внутри — тоже центрируем
-        const svg = btn.querySelector('svg');
-        if (svg) {
+        document.body.appendChild(toggleBtn);
+
+        // -------- СОЗДАНИЕ ПАНЕЛИ --------
+        const panel = document.createElement('div');
+        panel.className = 'share-panel-wrapper';
+        panel.innerHTML = `
+            <div class="share-panel glass">
+                <button class="share-close-btn" aria-label="Закрыть">&times;</button>
+                <div class="share-icons"></div>
+            </div>
+        `;
+        document.body.appendChild(panel);
+
+        const iconsContainer = panel.querySelector('.share-icons');
+        const closeBtn = panel.querySelector('.share-close-btn');
+
+        // -------- ГЕНЕРАЦИЯ ИКОНОК --------
+        socials.forEach(social => {
+            const item = document.createElement('a');
+            item.className = 'share-item';
+            item.setAttribute('data-color', social.color);
+            item.setAttribute('href', '#');
+            item.setAttribute('aria-label', social.name);
+            if (social.url) {
+                item.href = social.url(encodeURIComponent(window.location.href), encodeURIComponent(document.title));
+                item.target = '_blank';
+                item.rel = 'noopener noreferrer';
+            } else {
+                // для Instagram и копирования ссылки обрабатываем клик отдельно
+                item.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    if (social.name === 'Instagram') {
+                        navigator.clipboard.writeText(window.location.href).then(() => {
+                            alert('Ссылка скопирована! Откройте Instagram и вставьте её в сообщение.');
+                        }).catch(() => {
+                            prompt('Скопируйте ссылку вручную:', window.location.href);
+                        });
+                    } else if (social.name === 'Копировать ссылку') {
+                        navigator.clipboard.writeText(window.location.href).then(() => {
+                            alert('Ссылка скопирована в буфер обмена!');
+                        }).catch(() => {
+                            prompt('Скопируйте ссылку вручную:', window.location.href);
+                        });
+                    }
+                });
+            }
+
+            // SVG иконка (круг + белый path)
+            const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            svg.setAttribute('viewBox', '0 0 24 24');
+            svg.setAttribute('width', '36');
+            svg.setAttribute('height', '36');
             svg.style.display = 'block';
-            svg.style.width = '28px';
-            svg.style.height = '28px';
-            svg.style.fill = 'currentColor';
-            svg.style.transition = 'fill 0.2s';
+
+            const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+            circle.setAttribute('cx', '12');
+            circle.setAttribute('cy', '12');
+            circle.setAttribute('r', '12');
+            circle.setAttribute('fill', 'currentColor');
+            circle.style.transition = 'fill 0.3s ease';
+
+            const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            path.setAttribute('d', social.path);
+            path.setAttribute('fill', '#ffffff');
+
+            svg.appendChild(circle);
+            svg.appendChild(path);
+            item.appendChild(svg);
+
+            // Подпись
+            const label = document.createElement('span');
+            label.textContent = social.name;
+            label.style.cssText = 'font-size:0.75rem; opacity:0.8; margin-top:4px; display:block; text-align:center;';
+            item.appendChild(label);
+
+            // Стиль для иконки: цвет = зелёный (currentColor)
+            item.style.color = '#00ff41';
+            item.style.transition = 'color 0.3s ease';
+            item.style.textDecoration = 'none';
+            item.style.display = 'inline-flex';
+            item.style.flexDirection = 'column';
+            item.style.alignItems = 'center';
+            item.style.margin = '6px 8px';
+            item.style.cursor = 'pointer';
+
+            // При наведении меняем цвет на оригинальный
+            item.addEventListener('mouseenter', function() {
+                this.style.color = this.getAttribute('data-color');
+            });
+            item.addEventListener('mouseleave', function() {
+                this.style.color = '#00ff41';
+            });
+
+            iconsContainer.appendChild(item);
+        });
+
+        // -------- ОБРАБОТЧИКИ ОТКРЫТИЯ/ЗАКРЫТИЯ --------
+        let isOpen = false;
+
+        function openPanel() {
+            panel.classList.add('active');
+            isOpen = true;
         }
 
-        // Обработчик клика
-        btn.addEventListener('click', function(e) {
-            e.preventDefault();
-            if (item.copy) {
-                // Копирование или Instagram
-                if (item.icon === 'copy') {
-                    const url = decodeURIComponent(pageUrl);
-                    if (navigator.clipboard && navigator.clipboard.writeText) {
-                        navigator.clipboard.writeText(url).then(() => {
-                            showToast('Ссылка скопирована!');
-                        }).catch(() => fallbackCopy(url));
-                    } else {
-                        fallbackCopy(url);
-                    }
-                } else if (item.icon === 'insta') {
-                    window.open('https://www.instagram.com/', '_blank');
-                    showToast('Скопируйте ссылку и вставьте в Instagram');
-                }
-            } else if (item.url) {
-                window.open(item.url, '_blank', 'width=600,height=400,scrollbars=yes');
+        function closePanel() {
+            panel.classList.remove('active');
+            isOpen = false;
+        }
+
+        toggleBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (isOpen) {
+                closePanel();
+            } else {
+                openPanel();
             }
         });
 
-        // Эффекты наведения
-        btn.addEventListener('mouseenter', function() {
-            this.style.transform = 'scale(1.1)';
-            this.style.backgroundColor = 'rgba(255,255,255,0.08)';
-            const svg = this.querySelector('svg');
-            if (svg) svg.style.fill = '#0088cc'; // подсветка
-        });
-        btn.addEventListener('mouseleave', function() {
-            this.style.transform = 'scale(1)';
-            this.style.backgroundColor = 'transparent';
-            const svg = this.querySelector('svg');
-            if (svg) svg.style.fill = 'currentColor';
+        closeBtn.addEventListener('click', closePanel);
+
+        // Закрытие по клику вне панели
+        document.addEventListener('click', (e) => {
+            if (isOpen && !panel.contains(e.target) && e.target !== toggleBtn && !toggleBtn.contains(e.target)) {
+                closePanel();
+            }
         });
 
-        panel.appendChild(btn);
-    });
+        // Закрытие по Escape
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && isOpen) {
+                closePanel();
+            }
+        });
 
-    document.body.appendChild(panel);
-
-    // ===== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ =====
-    function fallbackCopy(text) {
-        const textarea = document.createElement('textarea');
-        textarea.value = text;
-        textarea.style.position = 'fixed';
-        textarea.style.opacity = '0';
-        document.body.appendChild(textarea);
-        textarea.select();
-        try {
-            document.execCommand('copy');
-            showToast('Ссылка скопирована!');
-        } catch (e) {
-            showToast('Не удалось скопировать, скопируйте вручную');
-        }
-        document.body.removeChild(textarea);
-    }
-
-    function showToast(msg) {
-        const toast = document.createElement('div');
-        toast.textContent = msg;
-        toast.style.cssText = `
-            position: fixed;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--glass-bg, rgba(10,10,10,0.9));
-            backdrop-filter: blur(10px);
-            color: var(--text-color, #00ff41);
-            padding: 12px 24px;
-            border-radius: 8px;
-            border: 1px solid var(--glass-border, rgba(0,255,65,0.2));
-            font-size: 1rem;
-            z-index: 10000;
-            animation: fadeInUp 0.3s ease;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-        `;
-        document.body.appendChild(toast);
-        setTimeout(() => {
-            toast.style.opacity = '0';
-            toast.style.transition = 'opacity 0.3s';
-            setTimeout(() => toast.remove(), 300);
-        }, 2500);
-    }
-
-    // Добавляем анимацию для тоста (если нет)
-    if (!document.getElementById('share-toast-style')) {
+        // -------- СТИЛИ (добавляем в head) --------
         const style = document.createElement('style');
-        style.id = 'share-toast-style';
         style.textContent = `
-            @keyframes fadeInUp {
-                from { opacity: 0; transform: translateX(-50%) translateY(20px); }
-                to { opacity: 1; transform: translateX(-50%) translateY(0); }
+            /* Кнопка-триггер */
+            .share-toggle-btn {
+                position: fixed;
+                right: 20px;
+                bottom: 90px;
+                z-index: 999;
+                background: var(--glass-bg, rgba(10,10,10,0.8));
+                backdrop-filter: blur(10px);
+                border: 1px solid var(--glass-border, rgba(0,255,65,0.3));
+                border-radius: 50%;
+                width: 56px;
+                height: 56px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: var(--text-color, #00ff41);
+                cursor: pointer;
+                transition: all 0.3s ease;
+                box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+            }
+            .share-toggle-btn:hover {
+                transform: scale(1.08);
+                border-color: var(--text-color, #00ff41);
+            }
+            .share-toggle-btn svg {
+                width: 28px;
+                height: 28px;
+            }
+
+            /* Панель */
+            .share-panel-wrapper {
+                position: fixed;
+                top: 0;
+                right: -420px;
+                width: 400px;
+                height: 100vh;
+                z-index: 1000;
+                transition: right 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                pointer-events: none;
+            }
+            .share-panel-wrapper.active {
+                right: 0;
+                pointer-events: auto;
+            }
+            .share-panel {
+                width: 100%;
+                height: 100%;
+                max-width: 400px;
+                background: var(--glass-bg, rgba(10,10,10,0.92));
+                backdrop-filter: blur(20px) saturate(180%);
+                -webkit-backdrop-filter: blur(20px) saturate(180%);
+                border-left: 1px solid var(--glass-border, rgba(0,255,65,0.2));
+                box-shadow: -8px 0 30px rgba(0,0,0,0.6);
+                padding: 30px 20px 20px;
+                overflow-y: auto;
+                display: flex;
+                flex-direction: column;
+                position: relative;
+                pointer-events: auto;
+            }
+            .share-close-btn {
+                position: absolute;
+                top: 16px;
+                right: 20px;
+                background: none;
+                border: none;
+                color: var(--text-color, #00ff41);
+                font-size: 2rem;
+                line-height: 1;
+                cursor: pointer;
+                transition: transform 0.3s ease;
+            }
+            .share-close-btn:hover {
+                transform: rotate(90deg);
+            }
+            .share-icons {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+                align-items: flex-start;
+                gap: 4px 10px;
+                margin-top: 30px;
+                padding: 10px 0;
+            }
+            .share-item {
+                flex: 0 0 calc(33.33% - 20px);
+                max-width: 100px;
+                margin: 6px 0;
+                text-align: center;
+                color: #00ff41;
+                transition: color 0.3s ease;
+                text-decoration: none;
+            }
+            .share-item svg {
+                width: 44px;
+                height: 44px;
+                margin: 0 auto;
+                display: block;
+            }
+            .share-item span {
+                display: block;
+                font-size: 0.7rem;
+                opacity: 0.8;
+                margin-top: 4px;
+                white-space: nowrap;
+            }
+
+            @media (max-width: 480px) {
+                .share-panel-wrapper {
+                    width: 100%;
+                    right: -100%;
+                }
+                .share-panel-wrapper.active {
+                    right: 0;
+                }
+                .share-panel {
+                    max-width: 100%;
+                    border-left: none;
+                    border-radius: 0;
+                }
+                .share-item {
+                    flex: 0 0 calc(25% - 10px);
+                    max-width: 70px;
+                }
+                .share-item svg {
+                    width: 38px;
+                    height: 38px;
+                }
+                .share-toggle-btn {
+                    right: 16px;
+                    bottom: 80px;
+                    width: 48px;
+                    height: 48px;
+                }
+                .share-toggle-btn svg {
+                    width: 24px;
+                    height: 24px;
+                }
             }
         `;
         document.head.appendChild(style);
-    }
-
-    // Адаптив для мобилок — панель уменьшаем или переносим вниз
-    if (window.innerWidth < 768) {
-        panel.style.right = '10px';
-        panel.style.padding = '8px 6px';
-        panel.style.gap = '6px';
-        panel.querySelectorAll('.share-btn').forEach(btn => {
-            btn.style.width = '32px';
-            btn.style.height = '32px';
-            const svg = btn.querySelector('svg');
-            if (svg) {
-                svg.style.width = '22px';
-                svg.style.height = '22px';
-            }
-        });
     }
 })();
