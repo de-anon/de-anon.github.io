@@ -437,6 +437,7 @@ if ('serviceWorker' in navigator) {
         if (!footer) return;
         if (footer.querySelector('.telegram-link')) return;
 
+        // Настраиваем футер на flex
         footer.style.display = 'flex';
         footer.style.justifyContent = 'space-between';
         footer.style.alignItems = 'center';
@@ -446,6 +447,7 @@ if ('serviceWorker' in navigator) {
         const p = footer.querySelector('p');
         if (p) p.style.margin = '0';
 
+        // Создаём ссылку
         const link = document.createElement('a');
         link.href = 'https://t.me/deanonproject';
         link.target = '_blank';
@@ -453,48 +455,45 @@ if ('serviceWorker' in navigator) {
         link.className = 'telegram-link';
         link.setAttribute('aria-label', 'Telegram канал');
 
+        // SVG иконка
         const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
         svg.setAttribute('viewBox', '0 0 24 24');
         svg.setAttribute('width', '28');
         svg.setAttribute('height', '28');
         svg.style.display = 'block';
-        svg.style.transition = 'all 0.3s ease';
 
-        // Круглый фон
+        // Круг — зелёный (цвет сайта)
         const bgCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
         bgCircle.setAttribute('cx', '12');
         bgCircle.setAttribute('cy', '12');
         bgCircle.setAttribute('r', '12');
-        bgCircle.setAttribute('fill', 'currentColor');
-        bgCircle.style.transition = 'all 0.3s ease';
+        bgCircle.setAttribute('fill', '#00ff41');
+        bgCircle.style.transition = 'fill 0.3s ease';
 
-        // Самолётик
+        // Самолётик — всегда белый
         const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
         path.setAttribute('d', 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.74 6.64l-1.72 8.08c-.12.56-.46.7-.93.44l-2.57-1.9-1.24 1.2c-.14.13-.25.25-.52.25l.18-2.64 4.82-4.35c.21-.18-.04-.28-.32-.1l-5.96 3.77-2.57-.8c-.56-.18-.57-.56.12-.83l10.04-3.87c.47-.17.9.1.74.73z');
-        path.setAttribute('fill', 'currentColor');
-        path.style.transition = 'all 0.3s ease';
+        path.setAttribute('fill', '#ffffff');
 
         svg.appendChild(bgCircle);
         svg.appendChild(path);
         link.appendChild(svg);
         footer.appendChild(link);
 
+        // Стили: при наведении круг становится голубым
         const style = document.createElement('style');
         style.textContent = `
             .telegram-link {
-                color: var(--text-color, #00ff41);
                 text-decoration: none;
-                transition: color 0.3s ease;
                 flex-shrink: 0;
+                display: inline-block;
+                transition: transform 0.3s ease;
             }
             .telegram-link:hover {
-                color: #0088cc;
+                transform: scale(1.05);
             }
             .telegram-link:hover svg circle {
-                fill: #0088cc;
-            }
-            .telegram-link:hover svg path {
-                fill: #ffffff;
+                fill: #0088cc !important;
             }
             @media (max-width: 480px) {
                 .telegram-link svg {
