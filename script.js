@@ -508,3 +508,211 @@ if ('serviceWorker' in navigator) {
         document.head.appendChild(style);
     }
 })();
+
+// ===== ПАНЕЛЬ РЕПОСТА (ВЫДВИЖНАЯ СПРАВА) =====
+(function createSharePanel() {
+    if (document.querySelector('.share-panel')) return;
+
+    // ===== ИКОНКИ (ВЫ УЖЕ ОПРЕДЕЛИЛИ В icons) =====
+    // Если icons уже объявлен в глобальной области, используем его.
+    // Если нет — объявим временно (но у вас он есть, я его не дублирую).
+
+    // ===== ДАННЫЕ ДЛЯ ШАРИНГА =====
+    const pageUrl = encodeURIComponent(window.location.href);
+    const pageTitle = encodeURIComponent(document.title || 'Посмотрите это!');
+
+    const shareItems = [
+        { url: `https://www.facebook.com/sharer.php?u=${pageUrl}`, icon: 'fb', label: 'Facebook' },
+        { url: `https://connect.ok.ru/offer?url=${pageUrl}`, icon: 'ok', label: 'Одноклассники' },
+        { url: `https://t.me/share/url?url=${pageUrl}&text=${pageTitle}`, icon: 'tg', label: 'Telegram' },
+        { url: `https://vk.com/share.php?url=${pageUrl}`, icon: 'vk', label: 'ВКонтакте' },
+        { url: `viber://forward?text=${pageUrl}`, icon: 'viber', label: 'Viber' },
+        { url: `https://wa.me/?text=${pageUrl}`, icon: 'wa', label: 'WhatsApp' },
+        { url: `https://twitter.com/intent/tweet?url=${pageUrl}`, icon: 'x', label: 'X' },
+        { url: `https://www.linkedin.com/sharing/share-offsite/?url=${pageUrl}`, icon: 'linkedin', label: 'LinkedIn' },
+        { url: `https://connect.mail.ru/share?url=${pageUrl}`, icon: 'mailru', label: 'Мой Мир' },
+        { url: `https://www.instagram.com/`, icon: 'insta', label: 'Instagram (скопируйте ссылку)', copy: true },
+        { url: null, icon: 'copy', label: 'Копировать ссылку', copy: true }
+    ];
+
+    // ===== СОЗДАЁМ ПАНЕЛЬ =====
+    const panel = document.createElement('div');
+    panel.className = 'share-panel';
+    panel.style.cssText = `
+        position: fixed;
+        right: 16px;
+        top: 50%;
+        transform: translateY(-50%);
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        z-index: 9999;
+        background: var(--glass-bg, rgba(10,10,10,0.7));
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        padding: 10px 8px;
+        border-radius: 14px;
+        border: 1px solid var(--glass-border, rgba(0,255,65,0.2));
+        box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+        transition: all 0.3s ease;
+    `;
+
+    // ===== ДОБАВЛЯЕМ КНОПКИ =====
+    shareItems.forEach(item => {
+        const btn = document.createElement('a');
+        btn.href = '#';
+        btn.className = 'share-btn';
+        btn.setAttribute('aria-label', item.label);
+        btn.title = item.label;
+
+        // Вставляем SVG иконку (если есть в глобальном icons)
+        if (window.icons && window.icons[item.icon]) {
+            btn.innerHTML = window.icons[item.icon];
+        } else {
+            // fallback: текст
+            btn.textContent = item.icon;
+        }
+
+        // Стили для кнопки
+        btn.style.cssText = `
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            color: var(--text-color, #00ff41);
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            outline: none;
+            padding: 0;
+            margin: 0;
+        `;
+        // SVG внутри — тоже центрируем
+        const svg = btn.querySelector('svg');
+        if (svg) {
+            svg.style.display = 'block';
+            svg.style.width = '28px';
+            svg.style.height = '28px';
+            svg.style.fill = 'currentColor';
+            svg.style.transition = 'fill 0.2s';
+        }
+
+        // Обработчик клика
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            if (item.copy) {
+                // Копирование или Instagram
+                if (item.icon === 'copy') {
+                    const url = decodeURIComponent(pageUrl);
+                    if (navigator.clipboard && navigator.clipboard.writeText) {
+                        navigator.clipboard.writeText(url).then(() => {
+                            showToast('Ссылка скопирована!');
+                        }).catch(() => fallbackCopy(url));
+                    } else {
+                        fallbackCopy(url);
+                    }
+                } else if (item.icon === 'insta') {
+                    window.open('https://www.instagram.com/', '_blank');
+                    showToast('Скопируйте ссылку и вставьте в Instagram');
+                }
+            } else if (item.url) {
+                window.open(item.url, '_blank', 'width=600,height=400,scrollbars=yes');
+            }
+        });
+
+        // Эффекты наведения
+        btn.addEventListener('mouseenter', function() {
+            this.style.transform = 'scale(1.1)';
+            this.style.backgroundColor = 'rgba(255,255,255,0.08)';
+            const svg = this.querySelector('svg');
+            if (svg) svg.style.fill = '#0088cc'; // подсветка
+        });
+        btn.addEventListener('mouseleave', function() {
+            this.style.transform = 'scale(1)';
+            this.style.backgroundColor = 'transparent';
+            const svg = this.querySelector('svg');
+            if (svg) svg.style.fill = 'currentColor';
+        });
+
+        panel.appendChild(btn);
+    });
+
+    document.body.appendChild(panel);
+
+    // ===== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ =====
+    function fallbackCopy(text) {
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.style.position = 'fixed';
+        textarea.style.opacity = '0';
+        document.body.appendChild(textarea);
+        textarea.select();
+        try {
+            document.execCommand('copy');
+            showToast('Ссылка скопирована!');
+        } catch (e) {
+            showToast('Не удалось скопировать, скопируйте вручную');
+        }
+        document.body.removeChild(textarea);
+    }
+
+    function showToast(msg) {
+        const toast = document.createElement('div');
+        toast.textContent = msg;
+        toast.style.cssText = `
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--glass-bg, rgba(10,10,10,0.9));
+            backdrop-filter: blur(10px);
+            color: var(--text-color, #00ff41);
+            padding: 12px 24px;
+            border-radius: 8px;
+            border: 1px solid var(--glass-border, rgba(0,255,65,0.2));
+            font-size: 1rem;
+            z-index: 10000;
+            animation: fadeInUp 0.3s ease;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        `;
+        document.body.appendChild(toast);
+        setTimeout(() => {
+            toast.style.opacity = '0';
+            toast.style.transition = 'opacity 0.3s';
+            setTimeout(() => toast.remove(), 300);
+        }, 2500);
+    }
+
+    // Добавляем анимацию для тоста (если нет)
+    if (!document.getElementById('share-toast-style')) {
+        const style = document.createElement('style');
+        style.id = 'share-toast-style';
+        style.textContent = `
+            @keyframes fadeInUp {
+                from { opacity: 0; transform: translateX(-50%) translateY(20px); }
+                to { opacity: 1; transform: translateX(-50%) translateY(0); }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+
+    // Адаптив для мобилок — панель уменьшаем или переносим вниз
+    if (window.innerWidth < 768) {
+        panel.style.right = '10px';
+        panel.style.padding = '8px 6px';
+        panel.style.gap = '6px';
+        panel.querySelectorAll('.share-btn').forEach(btn => {
+            btn.style.width = '32px';
+            btn.style.height = '32px';
+            const svg = btn.querySelector('svg');
+            if (svg) {
+                svg.style.width = '22px';
+                svg.style.height = '22px';
+            }
+        });
+    }
+})();
