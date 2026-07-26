@@ -518,7 +518,6 @@ if ('serviceWorker' in navigator) {
     }
 
     function build() {
-        // Проверка, чтобы не дублировать
         if (document.querySelector('.share-panel-wrapper')) return;
 
         // -------- КОНФИГУРАЦИЯ СОЦСЕТЕЙ --------
@@ -579,7 +578,7 @@ if ('serviceWorker' in navigator) {
             },
             {
                 name: 'Instagram',
-                url: null, // копирование ссылки
+                url: null,
                 color: '#E4405F',
                 path: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 4.5c2.05 0 3.71 1.66 3.71 3.71 0 2.05-1.66 3.71-3.71 3.71S8.29 12.26 8.29 10.21 9.95 6.5 12 6.5zm0 10.71c-2.42 0-4.56-1.28-5.78-3.21.47-1.48 1.85-2.53 3.47-2.53.72 0 1.38.24 1.91.63.53-.39 1.19-.63 1.91-.63 1.62 0 3.01 1.05 3.47 2.53-1.22 1.93-3.36 3.21-5.78 3.21z'
             },
@@ -591,19 +590,14 @@ if ('serviceWorker' in navigator) {
             }
         ];
 
-        // -------- СОЗДАНИЕ КНОПКИ-ТРИГГЕРА --------
+        // -------- СОЗДАНИЕ КНОПКИ-ТРИГГЕРА (новая) --------
         const toggleBtn = document.createElement('button');
         toggleBtn.className = 'share-toggle-btn';
         toggleBtn.setAttribute('aria-label', 'Поделиться');
+        // Новая иконка (из примера)
         toggleBtn.innerHTML = `
-            <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor">
-                <circle cx="12" cy="5" r="2.5" />
-                <circle cx="12" cy="19" r="2.5" />
-                <circle cx="19" cy="12" r="2.5" />
-                <line x1="14.5" y1="6.5" x2="19.5" y2="10.5" stroke="currentColor" stroke-width="1.5" />
-                <line x1="14.5" y1="17.5" x2="19.5" y2="13.5" stroke="currentColor" stroke-width="1.5" />
-                <line x1="9.5" y1="6.5" x2="4.5" y2="10.5" stroke="currentColor" stroke-width="1.5" />
-                <line x1="9.5" y1="17.5" x2="4.5" y2="13.5" stroke="currentColor" stroke-width="1.5" />
+            <svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" fill="none">
+                <path d="M11 6C12.6569 6 14 4.65685 14 3C14 1.34315 12.6569 0 11 0C9.34315 0 8 1.34315 8 3C8 3.22371 8.02449 3.44169 8.07092 3.65143L4.86861 5.65287C4.35599 5.24423 3.70652 5 3 5C1.34315 5 0 6.34315 0 8C0 9.65685 1.34315 11 3 11C3.70652 11 4.35599 10.7558 4.86861 10.3471L8.07092 12.3486C8.02449 12.5583 8 12.7763 8 13C8 14.6569 9.34315 16 11 16C12.6569 16 14 14.6569 14 13C14 11.3431 12.6569 10 11 10C10.2935 10 9.644 10.2442 9.13139 10.6529L5.92908 8.65143C5.97551 8.44169 6 8.22371 6 8C6 7.77629 5.97551 7.55831 5.92908 7.34857L9.13139 5.34713C9.644 5.75577 10.2935 6 11 6Z" fill="#FFFFFF"/>
             </svg>
         `;
         document.body.appendChild(toggleBtn);
@@ -634,7 +628,6 @@ if ('serviceWorker' in navigator) {
                 item.target = '_blank';
                 item.rel = 'noopener noreferrer';
             } else {
-                // для Instagram и копирования ссылки обрабатываем клик отдельно
                 item.addEventListener('click', (e) => {
                     e.preventDefault();
                     if (social.name === 'Instagram') {
@@ -653,7 +646,6 @@ if ('serviceWorker' in navigator) {
                 });
             }
 
-            // SVG иконка (круг + белый path)
             const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
             svg.setAttribute('viewBox', '0 0 24 24');
             svg.setAttribute('width', '36');
@@ -675,13 +667,11 @@ if ('serviceWorker' in navigator) {
             svg.appendChild(path);
             item.appendChild(svg);
 
-            // Подпись
             const label = document.createElement('span');
             label.textContent = social.name;
             label.style.cssText = 'font-size:0.75rem; opacity:0.8; margin-top:4px; display:block; text-align:center;';
             item.appendChild(label);
 
-            // Стиль для иконки: цвет = зелёный (currentColor)
             item.style.color = '#00ff41';
             item.style.transition = 'color 0.3s ease';
             item.style.textDecoration = 'none';
@@ -691,7 +681,6 @@ if ('serviceWorker' in navigator) {
             item.style.margin = '6px 8px';
             item.style.cursor = 'pointer';
 
-            // При наведении меняем цвет на оригинальный
             item.addEventListener('mouseenter', function() {
                 this.style.color = this.getAttribute('data-color');
             });
@@ -726,53 +715,54 @@ if ('serviceWorker' in navigator) {
 
         closeBtn.addEventListener('click', closePanel);
 
-        // Закрытие по клику вне панели
         document.addEventListener('click', (e) => {
             if (isOpen && !panel.contains(e.target) && e.target !== toggleBtn && !toggleBtn.contains(e.target)) {
                 closePanel();
             }
         });
 
-        // Закрытие по Escape
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape' && isOpen) {
                 closePanel();
             }
         });
 
-        // -------- СТИЛИ (добавляем в head) --------
+        // -------- ОБНОВЛЁННЫЕ СТИЛИ (с новой кнопкой) --------
         const style = document.createElement('style');
         style.textContent = `
-            /* Кнопка-триггер */
+            /* Новая кнопка-триггер */
             .share-toggle-btn {
                 position: fixed;
                 right: 20px;
                 bottom: 90px;
                 z-index: 999;
-                background: var(--glass-bg, rgba(10,10,10,0.8));
-                backdrop-filter: blur(10px);
-                border: 1px solid var(--glass-border, rgba(0,255,65,0.3));
+                width: 64px;
+                height: 64px;
                 border-radius: 50%;
-                width: 56px;
-                height: 56px;
+                background-color: #00ff41;
+                border: none;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                color: var(--text-color, #00ff41);
                 cursor: pointer;
-                transition: all 0.3s ease;
-                box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+                padding: 0;
+                transition: transform 0.2s, box-shadow 0.2s;
+                box-shadow: 0 2px 8px rgba(0, 255, 65, 0.3);
             }
             .share-toggle-btn:hover {
-                transform: scale(1.08);
-                border-color: var(--text-color, #00ff41);
+                transform: scale(1.1);
+                box-shadow: 0 4px 16px rgba(0, 255, 65, 0.5);
+            }
+            .share-toggle-btn:active {
+                transform: scale(0.95);
             }
             .share-toggle-btn svg {
                 width: 28px;
                 height: 28px;
+                display: block;
             }
 
-            /* Панель */
+            /* Панель (оставляем как было) */
             .share-panel-wrapper {
                 position: fixed;
                 top: 0;
@@ -877,8 +867,8 @@ if ('serviceWorker' in navigator) {
                 .share-toggle-btn {
                     right: 16px;
                     bottom: 80px;
-                    width: 48px;
-                    height: 48px;
+                    width: 56px;
+                    height: 56px;
                 }
                 .share-toggle-btn svg {
                     width: 24px;
