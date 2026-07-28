@@ -788,6 +788,10 @@ img {
     box-shadow: 0 4px 20px rgba(0, 255, 65, 0.4);
     transition: all 0.3s ease;
     display: none; /* скрыта по умолчанию */
+	user-select: none;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-webkit-tap-highlight-color: transparent;
 }
 
 .pwa-install-btn:hover {
