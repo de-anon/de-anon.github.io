@@ -907,7 +907,7 @@ if ('serviceWorker' in navigator) {
         installBtn = document.createElement('button');
         installBtn.id = 'installPwaBtn';
         installBtn.className = 'pwa-install-btn';
-        installBtn.textContent = '📲 Установить приложение';
+        installBtn.textContent = '📲';
         installBtn.addEventListener('click', async () => {
             if (deferredPrompt) {
                 deferredPrompt.prompt();
