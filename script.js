@@ -896,3 +896,59 @@ if ('serviceWorker' in navigator) {
         document.head.appendChild(style);
     }
 })();
+
+// ===== PWA INSTALL BUTTON =====
+(function initPwaInstall() {
+    let deferredPrompt = null;
+    let installBtn = null;
+
+    function createButton() {
+        if (installBtn) return;
+        installBtn = document.createElement('button');
+        installBtn.id = 'installPwaBtn';
+        installBtn.className = 'pwa-install-btn';
+        installBtn.textContent = '📲 Установить приложение';
+        installBtn.addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                if (outcome === 'accepted') {
+                    console.log('[PWA] Установлено');
+                } else {
+                    console.log('[PWA] Отказ');
+                }
+                deferredPrompt = null;
+                installBtn.style.display = 'none';
+            }
+        });
+        document.body.appendChild(installBtn);
+        // По умолчанию скрыта, покажем только при событии
+        installBtn.style.display = 'none';
+    }
+
+    function showButton() {
+        if (installBtn) {
+            installBtn.style.display = 'block';
+        } else {
+            createButton();
+            setTimeout(() => {
+                if (installBtn) installBtn.style.display = 'block';
+            }, 50);
+        }
+    }
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        showButton();
+    });
+
+    // Если уже установлено (например, после установки) — скрываем
+    window.addEventListener('appinstalled', () => {
+        if (installBtn) installBtn.style.display = 'none';
+        deferredPrompt = null;
+    });
+
+    // На случай, если событие не сработало (iOS, или не поддерживается), можно показать кнопку для инструкции, но пока ничего не делаем.
+    createButton();
+})();
