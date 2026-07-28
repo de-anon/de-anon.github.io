@@ -520,7 +520,7 @@ if ('serviceWorker' in navigator) {
     function build() {
         if (document.querySelector('.share-panel-wrapper')) return;
 
-        // -------- МАССИВ СОЦСЕТЕЙ С ИСПРАВЛЕННЫМИ РАЗМЕРАМИ --------
+        // -------- МАССИВ СОЦСЕТЕЙ (С ИСПРАВЛЕННЫМ "МОЙ МИР") --------
         const socials = [
             {
                 name: 'Telegram',
@@ -600,7 +600,8 @@ if ('serviceWorker' in navigator) {
                 name: 'Мой Мир',
                 url: (u) => `https://connect.mail.ru/share?url=${u}`,
                 color: '#005FF9',
-                viewBox: '0 0 250 250', // увеличен, чтобы вместить все элементы
+                viewBox: '0 0 250 250',
+                transform: 'translate(125,125) scale(0.65) translate(-110,-80)',
                 content: `<ellipse cx="67.9" cy="21.3" rx="21.3" ry="21.3" fill="#ffffff"/><ellipse cx="154.4" cy="21.3" rx="21.3" ry="21.3" fill="#ffffff"/><path d="M220.6 125.2L194.8 81c-3.2-5.4-10.1-7.3-15.6-4.1-5.4 3.2-7.3 10.1-4.1 15.5l3.8 6.4c-18.9 17.2-43 26.6-68.9 26.6-25.1 0-48.7-9-67.4-25.3l4.5-7.8c3.2-5.4 1.3-12.4-4.1-15.5-5.4-3.2-12.4-1.3-15.6 4.1L1.6 125.1c-3.2 5.4-1.3 12.4 4.1 15.5 1.8 1 3.8 1.5 5.7 1.5 3.9 0 7.7-2 9.8-5.6l8.2-14C52.2 141 80.3 151 110 151c30 0 59.1-10.7 82-29.7l9 15.3c2.1 3.6 5.9 5.6 9.8 5.6 1.9 0 3.9-.5 5.7-1.5 5.4-3.2 7.2-10.1 4.1-15.5z" fill="#ffffff"/>`
             }
         ];
@@ -630,7 +631,7 @@ if ('serviceWorker' in navigator) {
         const iconsContainer = panel.querySelector('.share-icons');
         const closeBtn = panel.querySelector('.share-close-btn');
 
-        // -------- ГЕНЕРАЦИЯ ИКОНОК (С УЧЁТОМ ТРАНСФОРМАЦИЙ) --------
+        // -------- ГЕНЕРАЦИЯ ИКОНОК --------
         socials.forEach(social => {
             const item = document.createElement('a');
             item.className = 'share-item';
@@ -661,39 +662,36 @@ if ('serviceWorker' in navigator) {
                 });
             }
 
-            // Создаём SVG
             const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-            const [,, w, h] = social.viewBox.split(' ').map(Number);
+            const [, , w, h] = social.viewBox.split(' ').map(Number);
             svg.setAttribute('viewBox', social.viewBox);
             svg.setAttribute('width', '44');
             svg.setAttribute('height', '44');
             svg.style.display = 'block';
 
-            // Круг (фон)
+            // Круг
             const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-            circle.setAttribute('cx', w/2);
-            circle.setAttribute('cy', h/2);
-            circle.setAttribute('r', Math.min(w,h)/2);
+            circle.setAttribute('cx', w / 2);
+            circle.setAttribute('cy', h / 2);
+            circle.setAttribute('r', Math.min(w, h) / 2);
             circle.setAttribute('fill', 'currentColor');
             svg.appendChild(circle);
 
-            // Группа с содержимым (и трансформацией, если есть)
-            const contentGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+            // Группа с содержимым и трансформацией
+            const group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
             if (social.transform) {
-                contentGroup.setAttribute('transform', social.transform);
+                group.setAttribute('transform', social.transform);
             }
-            contentGroup.insertAdjacentHTML('beforeend', social.content);
-            svg.appendChild(contentGroup);
+            group.insertAdjacentHTML('beforeend', social.content);
+            svg.appendChild(group);
 
             item.appendChild(svg);
 
-            // Подпись
             const label = document.createElement('span');
             label.textContent = social.name;
             label.style.cssText = 'font-size:0.75rem; opacity:0.8; margin-top:4px; display:block; text-align:center;';
             item.appendChild(label);
 
-            // Стили
             item.style.color = '#00ff41';
             item.style.transition = 'color 0.3s ease';
             item.style.textDecoration = 'none';
@@ -749,7 +747,7 @@ if ('serviceWorker' in navigator) {
             }
         });
 
-        // -------- СТИЛИ (без изменений) --------
+        // -------- СТИЛИ --------
         const style = document.createElement('style');
         style.textContent = `
             .share-toggle-btn {
