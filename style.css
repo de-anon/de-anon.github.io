@@ -821,11 +821,9 @@ img {
         if (!footer) return;
         if (footer.querySelector('.phone-qr-wrapper')) return;
 
-        // Находим ссылку на Telegram (она уже должна быть добавлена)
         const telegramLink = footer.querySelector('.telegram-link');
         if (!telegramLink) return;
 
-        // Создаём обёртку для иконки телефона
         const wrapper = document.createElement('span');
         wrapper.className = 'phone-qr-wrapper';
         wrapper.style.cssText = `
@@ -835,7 +833,6 @@ img {
             margin-right: 8px;
         `;
 
-        // Иконка телефона (ссылка на /manifest/)
         const phoneLink = document.createElement('a');
         phoneLink.href = '/manifest/';
         phoneLink.className = 'phone-link';
@@ -858,7 +855,6 @@ img {
             this.style.color = '#00ff41';
         });
 
-        // QR-код (всплывающий)
         const qrPopup = document.createElement('div');
         qrPopup.className = 'qr-popup';
         qrPopup.style.cssText = `
@@ -869,8 +865,8 @@ img {
             background: var(--glass-bg, rgba(10,10,10,0.95));
             backdrop-filter: blur(10px);
             border: 1px solid var(--glass-border, rgba(0,255,65,0.2));
-            border-radius: 12px;
-            padding: 10px;
+            border-radius: 10px;
+            padding: 8px;
             opacity: 0;
             visibility: hidden;
             transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s;
@@ -882,34 +878,30 @@ img {
         qrImg.src = '/assets/qr-codes/download.svg';
         qrImg.alt = 'QR-код для скачивания приложения';
         qrImg.style.cssText = `
-            width: 120px;
-            height: 120px;
+            width: 80px;
+            height: 80px;
             display: block;
             filter: invert(1);
         `;
         qrPopup.appendChild(qrImg);
 
-        // Подпись под QR
         const qrLabel = document.createElement('span');
         qrLabel.setAttribute('data-i18n', 'download_app');
         qrLabel.textContent = 'Скачать приложение';
         qrLabel.style.cssText = `
             display: block;
             text-align: center;
-            font-size: 0.75rem;
+            font-size: 0.65rem;
             opacity: 0.8;
-            margin-top: 6px;
+            margin-top: 4px;
             color: var(--text-color, #00ff41);
         `;
         qrPopup.appendChild(qrLabel);
 
         wrapper.appendChild(phoneLink);
         wrapper.appendChild(qrPopup);
-
-        // Вставляем перед Telegram
         footer.insertBefore(wrapper, telegramLink);
 
-        // Показываем QR при наведении на обёртку
         wrapper.addEventListener('mouseenter', function() {
             qrPopup.style.opacity = '1';
             qrPopup.style.visibility = 'visible';
@@ -921,13 +913,18 @@ img {
             qrPopup.style.transform = 'translateX(-50%) scale(0.8)';
         });
 
-        // Стили для адаптива
         const style = document.createElement('style');
         style.textContent = `
             @media (max-width: 480px) {
                 .qr-popup img {
-                    width: 90px !important;
-                    height: 90px !important;
+                    width: 60px !important;
+                    height: 60px !important;
+                }
+                .qr-popup {
+                    padding: 6px !important;
+                }
+                .qr-popup span {
+                    font-size: 0.55rem !important;
                 }
                 .phone-link svg {
                     width: 18px !important;
@@ -936,14 +933,8 @@ img {
             }
             @media (max-width: 400px) {
                 .qr-popup img {
-                    width: 70px !important;
-                    height: 70px !important;
-                }
-                .qr-popup {
-                    padding: 8px !important;
-                }
-                .qr-popup span {
-                    font-size: 0.65rem !important;
+                    width: 50px !important;
+                    height: 50px !important;
                 }
             }
         `;
