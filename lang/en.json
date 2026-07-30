@@ -48,5 +48,6 @@
     "manifest_ios_steps": "1. Open db.deanon.rf.gd in Safari.\n2. Tap the «Share» icon (square with arrow up) at the bottom.\n3. Scroll down and select «Add to Home Screen».\n4. Tap «Add» in the top right corner.\n5. Done! The icon appears on your home screen.",
     "manifest_ios_screenshot_alt": "[Screenshot: Safari menu with 'Add to Home Screen']",
     "manifest_conclusion": "Done! Now you have quick access to the hater database right from your phone screen. 🕵️‍♂️💚",
-    "manifest_nav": "Install"
+    "manifest_nav": "Install",
+	"download_app": "Download app"
 }

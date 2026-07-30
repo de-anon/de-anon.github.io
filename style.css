@@ -807,3 +807,39 @@ img {
         font-size: 0.85rem;
     }
 }
+
+/* QR-код в футере */
+.qr-footer {
+    width: 100%;
+    text-align: center;
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+}
+.qr-footer a {
+    display: inline-block;
+    line-height: 0;
+}
+.qr-footer svg,
+.qr-footer img {
+    width: 100px;
+    height: 100px;
+    display: block;
+    margin: 0 auto;
+}
+.qr-footer img {
+    filter: invert(1); /* Инверсный QR-код */
+}
+.qr-footer span {
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+@media (max-width: 480px) {
+    .qr-footer svg,
+    .qr-footer img {
+        width: 80px;
+        height: 80px;
+    }
+}

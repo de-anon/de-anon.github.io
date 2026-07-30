@@ -48,5 +48,6 @@
     "manifest_ios_steps": "1. Ouvrez db.deanon.rf.gd dans Safari.\n2. Appuyez sur l'icône «Partager» (carré avec flèche vers le haut) en bas.\n3. Faites défiler et sélectionnez «Ajouter à l'écran d'accueil».\n4. Appuyez sur «Ajouter» en haut à droite.\n5. Terminé ! L'icône apparaît sur votre écran d'accueil.",
     "manifest_ios_screenshot_alt": "[Capture : menu Safari avec 'Ajouter à l'écran d'accueil']",
     "manifest_conclusion": "Terminé ! Vous avez maintenant un accès rapide à la base de données des harceleurs directement depuis votre téléphone. 🕵️‍♂️💚",
-    "manifest_nav": "Installation"
+    "manifest_nav": "Installation",
+	"download_app": "Télécharger l'application"
 }
