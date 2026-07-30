@@ -953,32 +953,3 @@ if ('serviceWorker' in navigator) {
     // На случай, если событие не сработало (iOS, или не поддерживается), можно показать кнопку для инструкции, но пока ничего не делаем.
     createButton();
 })();
-
-// ===== QR-код в футере =====
-function addQrToFooter() {
-    const footer = document.querySelector('footer.footer');
-    if (!footer) return;
-    if (footer.querySelector('.qr-footer')) return;
-
-    const qrBlock = document.createElement('div');
-    qrBlock.className = 'qr-footer';
-
-    const link = document.createElement('a');
-    link.href = '/manifest/';
-    link.setAttribute('aria-label', 'Скачать приложение');
-
-    const img = document.createElement('img');
-    img.src = '/assets/qr-codes/download.svg';
-    img.alt = 'QR-код для скачивания приложения';
-    img.className = 'qr-image';
-    img.style.filter = 'invert(1)'; // Инверсный QR
-    link.appendChild(img);
-
-    const caption = document.createElement('span');
-    caption.setAttribute('data-i18n', 'download_app');
-    caption.textContent = 'Скачать приложение'; // fallback
-
-    qrBlock.appendChild(link);
-    qrBlock.appendChild(caption);
-    footer.appendChild(qrBlock);
-}
