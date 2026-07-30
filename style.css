@@ -808,8 +808,8 @@ img {
     }
 }
 
-// ===== Тултип с QR-кодом при наведении на иконку телефона =====
-(function initPhoneQrTooltip() {
+// ===== Иконка телефона с тултипом QR =====
+(function initPhoneQr() {
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', build);
     } else {
@@ -819,141 +819,68 @@ img {
     function build() {
         const footer = document.querySelector('footer.footer');
         if (!footer) return;
-        if (footer.querySelector('.phone-qr-tooltip')) return;
+        if (footer.querySelector('.phone-qr-wrapper')) return;
 
-        // Находим ссылку на Telegram (она уже должна быть добавлена ранее)
-        let telegramLink = footer.querySelector('.telegram-link');
-        
-        // Создаём контейнер для иконки телефона и тултипа
-        const container = document.createElement('span');
-        container.className = 'phone-qr-tooltip';
-        container.style.cssText = `
-            display: inline-flex;
-            align-items: center;
-            position: relative;
-            margin-right: 8px;
-        `;
+        const telegramLink = footer.querySelector('.telegram-link');
+        if (!telegramLink) return;
 
-        // Иконка телефона (ссылка на /manifest/)
+        // Контейнер
+        const wrapper = document.createElement('span');
+        wrapper.className = 'phone-qr-wrapper';
+        wrapper.style.cssText = 'display:inline-flex;align-items:center;position:relative;margin-right:8px;';
+
+        // Иконка телефона
         const phoneLink = document.createElement('a');
         phoneLink.href = '/manifest/';
-        phoneLink.setAttribute('aria-label', 'Скачать приложение');
-        phoneLink.style.cssText = `
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            color: #00ff41;
-            transition: color 0.3s ease;
-            text-decoration: none;
-            line-height: 0;
-        `;
+        phoneLink.style.cssText = 'display:inline-flex;align-items:center;justify-content:center;color:#00ff41;transition:color .3s;text-decoration:none;line-height:0;padding:4px;';
         phoneLink.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="currentColor"><path d="M12.5 1A3.5 3.5 0 0 1 16 4.5v11a3.5 3.5 0 0 1-3.5 3.5h-5A3.5 3.5 0 0 1 4 15.5v-11A3.5 3.5 0 0 1 7.5 1h5Zm-5 1.3a2.2 2.2 0 0 0-2.2 2.2v11a2.2 2.2 0 0 0 2.2 2.2h5a2.2 2.2 0 0 0 2.2-2.2v-11a2.2 2.2 0 0 0-2.2-2.2h-5Zm4.65 2.35h-4.3v-1.3h4.3v1.3Z"></path></svg>`;
-        
-        // При наведении на иконку меняем цвет на синий
-        phoneLink.addEventListener('mouseenter', function() {
-            this.style.color = '#2AABEE';
-        });
-        phoneLink.addEventListener('mouseleave', function() {
-            this.style.color = '#00ff41';
-        });
+        phoneLink.addEventListener('mouseenter', () => phoneLink.style.color = '#2AABEE');
+        phoneLink.addEventListener('mouseleave', () => phoneLink.style.color = '#00ff41');
 
-        // Тултип с QR-кодом (всплывает при наведении)
+        // Тултип с QR
         const tooltip = document.createElement('div');
         tooltip.className = 'qr-tooltip';
         tooltip.style.cssText = `
-            position: absolute;
-            bottom: calc(100% + 10px);
-            left: 50%;
-            transform: translateX(-50%) scale(0.9);
-            background: var(--glass-bg, rgba(10,10,10,0.95));
-            backdrop-filter: blur(10px);
-            border: 1px solid var(--glass-border, rgba(0,255,65,0.2));
-            border-radius: 10px;
-            padding: 8px 10px;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s;
-            box-shadow: 0 6px 24px rgba(0,0,0,0.5);
-            pointer-events: none;
-            z-index: 1000;
-            white-space: nowrap;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
+            position:absolute; bottom:calc(100% + 10px); left:50%; transform:translateX(-50%) scale(0.9);
+            background:var(--glass-bg,rgba(10,10,10,0.95)); backdrop-filter:blur(10px);
+            border:1px solid var(--glass-border,rgba(0,255,65,0.2)); border-radius:10px;
+            padding:8px 10px; opacity:0; visibility:hidden;
+            transition:opacity .25s, transform .25s, visibility .25s;
+            box-shadow:0 6px 24px rgba(0,0,0,0.5); pointer-events:none; z-index:1000;
+            display:flex; flex-direction:column; align-items:center; gap:4px;
         `;
-
-        // QR-код (инверсный, маленький)
         const qrImg = document.createElement('img');
         qrImg.src = '/assets/qr-codes/download.svg';
-        qrImg.alt = 'QR-код для скачивания приложения';
-        qrImg.style.cssText = `
-            width: 70px;
-            height: 70px;
-            display: block;
-            filter: invert(1);
-        `;
+        qrImg.alt = 'QR-код';
+        qrImg.style.cssText = 'width:70px;height:70px;display:block;filter:invert(1);';
         tooltip.appendChild(qrImg);
 
-        // Подпись под QR
         const label = document.createElement('span');
         label.setAttribute('data-i18n', 'download_app');
         label.textContent = 'Скачать приложение';
-        label.style.cssText = `
-            font-size: 0.6rem;
-            opacity: 0.8;
-            color: var(--text-color, #00ff41);
-            text-align: center;
-        `;
+        label.style.cssText = 'font-size:0.6rem;opacity:0.8;color:var(--text-color,#00ff41);text-align:center;';
         tooltip.appendChild(label);
 
-        container.appendChild(phoneLink);
-        container.appendChild(tooltip);
+        wrapper.appendChild(phoneLink);
+        wrapper.appendChild(tooltip);
+        footer.insertBefore(wrapper, telegramLink);
 
-        // Вставляем перед Telegram, если он есть, иначе просто в конец футера
-        if (telegramLink) {
-            footer.insertBefore(container, telegramLink);
-        } else {
-            footer.appendChild(container);
-        }
-
-        // Показываем/скрываем тултип при наведении на контейнер
-        container.addEventListener('mouseenter', function() {
+        wrapper.addEventListener('mouseenter', () => {
             tooltip.style.opacity = '1';
             tooltip.style.visibility = 'visible';
             tooltip.style.transform = 'translateX(-50%) scale(1)';
         });
-        container.addEventListener('mouseleave', function() {
+        wrapper.addEventListener('mouseleave', () => {
             tooltip.style.opacity = '0';
             tooltip.style.visibility = 'hidden';
             tooltip.style.transform = 'translateX(-50%) scale(0.9)';
         });
 
-        // Адаптив
+        // Стили
         const style = document.createElement('style');
         style.textContent = `
-            @media (max-width: 480px) {
-                .qr-tooltip img {
-                    width: 60px !important;
-                    height: 60px !important;
-                }
-                .qr-tooltip {
-                    padding: 6px 8px !important;
-                }
-                .qr-tooltip span {
-                    font-size: 0.5rem !important;
-                }
-                .phone-qr-tooltip svg {
-                    width: 18px !important;
-                    height: 18px !important;
-                }
-            }
-            @media (max-width: 400px) {
-                .qr-tooltip img {
-                    width: 50px !important;
-                    height: 50px !important;
-                }
-            }
+            @media (max-width:480px){.qr-tooltip img{width:60px!important;height:60px!important}.qr-tooltip{padding:6px 8px!important}.qr-tooltip span{font-size:.5rem!important}.phone-qr-wrapper svg{width:18px!important;height:18px!important}}
+            @media (max-width:400px){.qr-tooltip img{width:50px!important;height:50px!important}}
         `;
         document.head.appendChild(style);
     }
