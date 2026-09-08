@@ -363,7 +363,6 @@ function addManifestLink() {
 // ===== ИНИЦИАЛИЗАЦИЯ =====
 loadLanguage(currentLang).then(() => {
     addManifestLink();
-    addQrToFooter(); // <-- добавить эту строку
 });
 
 loadCards();
@@ -954,28 +953,10 @@ if ('serviceWorker' in navigator) {
     createButton();
 })();
 
-// ===== ПЛАВНЫЙ СКРОЛЛ =====
+// ===== ПЛАВНЫЙ СКРОЛЛ (локальная загрузка) =====
 (function initSmoothScroll() {
-    // Если библиотека уже загружена — сразу инициализируем
-    if (window.SmoothScroll) {
-        window.SmoothScroll({
-            animationTime: 800,
-            stepSize: 75,
-            accelerationDelta: 30,
-            accelerationMax: 2,
-            keyboardSupport: true,
-            arrowScroll: 50,
-            pulseAlgorithm: true,
-            pulseScale: 4,
-            pulseNormalize: 1,
-            touchpadSupport: true
-        });
-        return;
-    }
-
-    // Если не загружена — динамически подключаем скрипт с CDN
     const script = document.createElement('script');
-    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/smoothscroll/1.4.10/SmoothScroll.min.js';
+    script.src = '/SmoothScroll.min.js';
     script.async = true;
     script.onload = function () {
         window.SmoothScroll({
@@ -992,10 +973,8 @@ if ('serviceWorker' in navigator) {
         });
     };
     script.onerror = function () {
-        console.warn('[SmoothScroll] Не удалось загрузить библиотеку с CDN');
-        // Можно использовать нативный scroll-behavior: smooth как fallback,
-        // если он ещё не включён в CSS
-        document.documentElement.style.scrollBehavior = 'smooth';
+        console.warn('[SmoothScroll] Не удалось загрузить локальный файл');
+        document.documentElement.style.scrollBehavior = 'smooth'; // фолбэк
     };
     document.head.appendChild(script);
 })();
