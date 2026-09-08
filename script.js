@@ -953,3 +953,49 @@ if ('serviceWorker' in navigator) {
     // На случай, если событие не сработало (iOS, или не поддерживается), можно показать кнопку для инструкции, но пока ничего не делаем.
     createButton();
 })();
+
+// ===== ПЛАВНЫЙ СКРОЛЛ =====
+(function initSmoothScroll() {
+    // Если библиотека уже загружена — сразу инициализируем
+    if (window.SmoothScroll) {
+        window.SmoothScroll({
+            animationTime: 800,
+            stepSize: 75,
+            accelerationDelta: 30,
+            accelerationMax: 2,
+            keyboardSupport: true,
+            arrowScroll: 50,
+            pulseAlgorithm: true,
+            pulseScale: 4,
+            pulseNormalize: 1,
+            touchpadSupport: true
+        });
+        return;
+    }
+
+    // Если не загружена — динамически подключаем скрипт с CDN
+    const script = document.createElement('script');
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/smoothscroll/1.4.10/SmoothScroll.min.js';
+    script.async = true;
+    script.onload = function () {
+        window.SmoothScroll({
+            animationTime: 800,
+            stepSize: 75,
+            accelerationDelta: 30,
+            accelerationMax: 2,
+            keyboardSupport: true,
+            arrowScroll: 50,
+            pulseAlgorithm: true,
+            pulseScale: 4,
+            pulseNormalize: 1,
+            touchpadSupport: true
+        });
+    };
+    script.onerror = function () {
+        console.warn('[SmoothScroll] Не удалось загрузить библиотеку с CDN');
+        // Можно использовать нативный scroll-behavior: smooth как fallback,
+        // если он ещё не включён в CSS
+        document.documentElement.style.scrollBehavior = 'smooth';
+    };
+    document.head.appendChild(script);
+})();
