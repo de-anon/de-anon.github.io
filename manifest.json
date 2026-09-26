@@ -1,1 +1,165 @@
-["imangaliev.json", "baenbai_marina.json", "nurlan.json", "svetlana.json", "alia.json", "larisa.json", "katya.json", "wackron.json", "andbesist.json", "dekit.json", "liza.json", "test.json", "test2.json", "olegovna.json", "kuznetsukha.json"]
+{
+  "id": "/?source=pwa",
+  "name": "Деанон — база данных хейтеров",
+  "short_name": "Деанон",
+  "description": "Публичная база данных хейтеров и нарушителей. Номера, соцсети, доксинг, кибербезопасность.",
+  "lang": "ru",
+  "dir": "ltr",
+  "start_url": "/?source=pwa",
+  "scope": "/",
+  "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone", "minimal-ui", "browser"],
+  "orientation": "any",
+  "background_color": "#000000",
+  "theme_color": "#000000",
+  "categories": ["utilities", "security", "social"],
+  "prefer_related_applications": false,
+  "i18n": {
+    "en": {
+      "name": "De-Anon — Haters Database",
+      "short_name": "De-Anon",
+      "description": "Public database of haters and violators. Doxxing and cybersecurity."
+    },
+    "fr": {
+      "name": "De-Anon — Base de données des haters",
+      "short_name": "De-Anon",
+      "description": "Base de données publique des haters et des contrevenants."
+    }
+  },
+
+  "icons": [
+    { "src": "/assets/favicon/favicon.svg",                 "sizes": "any",       "type": "image/svg+xml", "purpose": "any" },
+    { "src": "/assets/favicon/favicon.webp",                "sizes": "any",       "type": "image/webp",    "purpose": "any" },
+
+    { "src": "/assets/favicon/favicon-16x16.png",           "sizes": "16x16",     "type": "image/png",     "purpose": "any" },
+    { "src": "/assets/favicon/favicon-32x32.png",           "sizes": "32x32",     "type": "image/png",     "purpose": "any" },
+    { "src": "/assets/favicon/favicon-48x48.png",           "sizes": "48x48",     "type": "image/png",     "purpose": "any" },
+    { "src": "/assets/favicon/favicon-96x96.png",           "sizes": "96x96",     "type": "image/png",     "purpose": "any" },
+    { "src": "/assets/favicon/favicon-120x120.png",         "sizes": "120x120",   "type": "image/png",     "purpose": "any" },
+    { "src": "/assets/favicon/favicon-180x180.png",         "sizes": "180x180",   "type": "image/png",     "purpose": "any" },
+    { "src": "/assets/favicon/favicon.png",                 "sizes": "512x512",   "type": "image/png",     "purpose": "any" },
+
+    { "src": "/assets/favicon/favicon-16x16.webp",          "sizes": "16x16",     "type": "image/webp",    "purpose": "any" },
+    { "src": "/assets/favicon/favicon-32x32.webp",          "sizes": "32x32",     "type": "image/webp",    "purpose": "any" },
+    { "src": "/assets/favicon/favicon-48x48.webp",          "sizes": "48x48",     "type": "image/webp",    "purpose": "any" },
+    { "src": "/assets/favicon/favicon-120x120.webp",        "sizes": "120x120",   "type": "image/webp",    "purpose": "any" },
+    { "src": "/assets/favicon/favicon-180x180.webp",        "sizes": "180x180",   "type": "image/webp",    "purpose": "any" },
+
+    { "src": "/assets/favicon/android-chrome-36x36.png",    "sizes": "36x36",     "type": "image/png",     "purpose": "any" },
+    { "src": "/assets/favicon/android-chrome-48x48.png",    "sizes": "48x48",     "type": "image/png",     "purpose": "any" },
+    { "src": "/assets/favicon/android-chrome-72x72.png",    "sizes": "72x72",     "type": "image/png",     "purpose": "any" },
+    { "src": "/assets/favicon/android-chrome-96x96.png",    "sizes": "96x96",     "type": "image/png",     "purpose": "any" },
+    { "src": "/assets/favicon/android-chrome-144x144.png",  "sizes": "144x144",   "type": "image/png",     "purpose": "any" },
+    { "src": "/assets/favicon/android-chrome-168x168.png",  "sizes": "168x168",   "type": "image/png",     "purpose": "any" },
+    { "src": "/assets/favicon/android-chrome-192x192.png",  "sizes": "192x192",   "type": "image/png",     "purpose": "any" },
+    { "src": "/assets/favicon/android-chrome-256x256.png",  "sizes": "256x256",   "type": "image/png",     "purpose": "any" },
+    { "src": "/assets/favicon/android-chrome-384x384.png",  "sizes": "384x384",   "type": "image/png",     "purpose": "any" },
+    { "src": "/assets/favicon/android-chrome-512x512.png",  "sizes": "512x512",   "type": "image/png",     "purpose": "any" },
+    { "src": "/assets/favicon/android-chrome-1024x1024.png","sizes": "1024x1024", "type": "image/png",     "purpose": "any" },
+
+    { "src": "/assets/favicon/android-icon-192x192.png",    "sizes": "192x192",   "type": "image/png",     "purpose": "any" },
+    { "src": "/assets/favicon/icon-144x144.png",            "sizes": "144x144",   "type": "image/png",     "purpose": "any" },
+
+    { "src": "/assets/favicon/apple-icon-57x57.png",        "sizes": "57x57",     "type": "image/png",     "purpose": "any" },
+    { "src": "/assets/favicon/apple-icon-60x60.png",        "sizes": "60x60",     "type": "image/png",     "purpose": "any" },
+    { "src": "/assets/favicon/apple-icon-72x72.png",        "sizes": "72x72",     "type": "image/png",     "purpose": "any" },
+    { "src": "/assets/favicon/apple-icon-76x76.png",        "sizes": "76x76",     "type": "image/png",     "purpose": "any" },
+    { "src": "/assets/favicon/apple-icon-114x114.png",      "sizes": "114x114",   "type": "image/png",     "purpose": "any" },
+    { "src": "/assets/favicon/apple-icon-120x120.png",      "sizes": "120x120",   "type": "image/png",     "purpose": "any" },
+    { "src": "/assets/favicon/apple-icon-144x144.png",      "sizes": "144x144",   "type": "image/png",     "purpose": "any" },
+    { "src": "/assets/favicon/apple-icon-152x152.png",      "sizes": "152x152",   "type": "image/png",     "purpose": "any" },
+    { "src": "/assets/favicon/apple-icon-180x180.png",      "sizes": "180x180",   "type": "image/png",     "purpose": "any" },
+
+    { "src": "/assets/favicon/apple-touch-icon.png",        "sizes": "180x180",   "type": "image/png",     "purpose": "any" },
+    { "src": "/assets/favicon/apple-touch-icon-57x57.png",  "sizes": "57x57",     "type": "image/png",     "purpose": "any" },
+    { "src": "/assets/favicon/apple-touch-icon-60x60.png",  "sizes": "60x60",     "type": "image/png",     "purpose": "any" },
+    { "src": "/assets/favicon/apple-touch-icon-72x72.png",  "sizes": "72x72",     "type": "image/png",     "purpose": "any" },
+    { "src": "/assets/favicon/apple-touch-icon-76x76.png",  "sizes": "76x76",     "type": "image/png",     "purpose": "any" },
+    { "src": "/assets/favicon/apple-touch-icon-114x114.png","sizes": "114x114",   "type": "image/png",     "purpose": "any" },
+    { "src": "/assets/favicon/apple-touch-icon-120x120.png","sizes": "120x120",   "type": "image/png",     "purpose": "any" },
+    { "src": "/assets/favicon/apple-touch-icon-144x144.png","sizes": "144x144",   "type": "image/png",     "purpose": "any" },
+    { "src": "/assets/favicon/apple-touch-icon-152x152.png","sizes": "152x152",   "type": "image/png",     "purpose": "any" },
+    { "src": "/assets/favicon/apple-touch-icon-167x167.png","sizes": "167x167",   "type": "image/png",     "purpose": "any" },
+
+    { "src": "/assets/favicon/mstile-70x70.png",            "sizes": "70x70",     "type": "image/png",     "purpose": "any" },
+    { "src": "/assets/favicon/mstile-150x150.png",          "sizes": "150x150",   "type": "image/png",     "purpose": "any" },
+    { "src": "/assets/favicon/mstile-310x310.png",          "sizes": "310x310",   "type": "image/png",     "purpose": "any" },
+
+    { "src": "/assets/favicon/maskable-icon-192x192.png",   "sizes": "192x192",   "type": "image/png",     "purpose": "maskable" },
+    { "src": "/assets/favicon/maskable-icon-512x512.png",   "sizes": "512x512",   "type": "image/png",     "purpose": "maskable" },
+    { "src": "/assets/favicon/maskable-icon-1024x1024.png", "sizes": "1024x1024", "type": "image/png",     "purpose": "maskable" }
+  ],
+
+  "shortcuts": [
+    {
+      "name": "Поиск по базе",
+      "short_name": "Поиск",
+      "description": "Найти человека по имени, телефону или нику",
+      "url": "/?action=search&source=pwa",
+      "icons": [
+        { "src": "/assets/favicon/favicon-96x96.png", "sizes": "96x96", "type": "image/png" }
+      ]
+    },
+    {
+      "name": "О проекте",
+      "short_name": "О проекте",
+      "url": "/about/?source=pwa",
+      "icons": [
+        { "src": "/assets/favicon/favicon-96x96.png", "sizes": "96x96", "type": "image/png" }
+      ]
+    },
+    {
+      "name": "FAQ",
+      "short_name": "FAQ",
+      "url": "/faq/?source=pwa",
+      "icons": [
+        { "src": "/assets/favicon/favicon-96x96.png", "sizes": "96x96", "type": "image/png" }
+      ]
+    },
+    {
+      "name": "Условия",
+      "short_name": "Условия",
+      "url": "/tos/?source=pwa",
+      "icons": [
+        { "src": "/assets/favicon/favicon-96x96.png", "sizes": "96x96", "type": "image/png" }
+      ]
+    },
+    {
+      "name": "Приватность",
+      "short_name": "Приватность",
+      "url": "/privacy/?source=pwa",
+      "icons": [
+        { "src": "/assets/favicon/favicon-96x96.png", "sizes": "96x96", "type": "image/png" }
+      ]
+    }
+  ],
+
+  "screenshots": [
+    {
+      "src": "/assets/screenshots/desktop.png",
+      "sizes": "1920x1080",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Главная страница на десктопе"
+    },
+    {
+      "src": "/assets/screenshots/mobile.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Главная страница на смартфоне"
+    }
+  ],
+
+  "related_applications": [],
+  "launch_handler": {
+    "client_mode": ["navigate-existing", "auto"]
+  },
+  "handle_links": "preferred",
+  "edge_side_panel": {
+    "preferred_width": 400
+  },
+  "scope_extensions": [
+    { "origin": "https://db.deanon.rf.gd" }
+  ]
+}
