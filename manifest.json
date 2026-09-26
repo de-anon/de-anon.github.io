@@ -136,14 +136,14 @@
 
   "screenshots": [
     {
-      "src": "/assets/screenshots/desktop.png",
+      "src": "/assets/screenshots/1763x844.jpeg",
       "sizes": "1920x1080",
       "type": "image/png",
       "form_factor": "wide",
       "label": "Главная страница на десктопе"
     },
     {
-      "src": "/assets/screenshots/mobile.png",
+      "src": "assets/screenshots/376x815.png",
       "sizes": "1080x1920",
       "type": "image/png",
       "form_factor": "narrow",
